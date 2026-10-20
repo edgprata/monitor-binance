@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sinais Quant - Monitor de Futuros Binance</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: #f1f5f9;
+      color: #334155;
+    }
+
+    /* BARRA LATERAL (SIDEBAR) */
+    .sidebar {
+      width: 260px;
+      background-color: #1a0b2e;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      margin-bottom: 10px;
+    }
+
+    .sidebar-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 15px 0;
+    }
+
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-menu li a i {
+      margin-right: 14px;
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-menu li.active a, .sidebar-menu li a:hover {
+      background-color: #2e1065;
+      color: #ffffff;
+      border-left: 4px solid #3b82f6;
+    }
+
+    /* CONTEÚDO PRINCIPAL */
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      overflow-x: auto;
+    }
+
+    .header-page {
+      margin-bottom: 25px;
+      border-bottom: 3px solid #3b82f6;
+      padding-bottom: 12px;
+    }
+
+    .header-page h1 {
+      font-size: 22px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .header-page p {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    /* FILTROS / PARÂMETROS EDITÁVEIS NO TOPO */
+    .filter-bar {
+      background: white;
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-item label {
+      font-size: 11px;
+      font-weight: bold;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .filter-item input {
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      width: 120px;
+      font-weight: 600;
+    }
+
+    .btn-apply {
+      padding: 8px 16px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+
+    .btn-apply:hover {
+      background-color: #2563eb;
+    }
+
+    /* TABELA DE SINAIS */
+    .card-table {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead {
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #1e293b;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* SINAIS LONG / SHORT VISUAIS */
+    .signal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .signal-long {
+      color: #10b981; /* Verde */
+    }
+
+    .signal-short {
+      color: #ef4444; /* Vermelho */
+    }
+
+    .asset-name {
+      font-weight: 700;
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .copy-btn {
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .copy-btn:hover {
+      color: #1d4ed8;
+    }
+
+    .badge-strategy {
+      background-color: #f1f5f9;
+      color: #475569;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA LATERAL -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
+      <div class="sidebar-title">Águia Spread</div>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="active"><a href="#"><i class="fa-solid fa-bolt"></i> Sinais Milionários</a></li>
+      <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboards</a></li>
+      <li><a href="#"><i class="fa-solid fa-bell"></i> Notificações</a></li>
+    </ul>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="main-content">
+    <div class="header-page">
+      <h1>Sinais Milionários - Gráfico Diário (21h)</h1>
+      <p id="subtitulo-data">Histórico de Fechamento Diário da Binance Futuros</p>
+    </div>
+
+    <!-- PARÂMETROS EDITÁVEIS DIRETAMENTE NA TELA -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>Vol vs Média (> %)</label>
+        <input type="number" id="filtroVol" value="50">
+      </div>
+      <div class="filter-item">
+        <label>CV Normalizado (< %)</label>
+        <input type="number" id="filtroCV" value="20">
+      </div>
+      <div class="filter-item">
+        <label>Var % Preço (> %)</label>
+        <input type="number" id="filtroVar" value="30">
+      </div>
+      <button class="btn-apply" onclick="renderizarTabela()">Atualizar Filtros</button>
+    </div>
+
+    <!-- TABELA -->
+    <div class="card-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Sinal</th>
+            <th>Data Alerta</th>
+            <th>Nome do Ativo USDT.P</th>
+            <th>Rompimento</th>
+            <th>Preço</th>
+            <th>Volume (USDT)</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo">
+          <tr><td colspan="6" style="text-align:center;">A carregar dados...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    let dadosCompletos = [];
+
+    // Carrega o ficheiro dados.json gerado automaticamente pelo Python
+    async function carregarDados() {
+      try {
+        const resposta = await fetch('dados.json?t=' + new Date().getTime());
+        const dados = await resposta.json();
+        dadosCompletos = dados.ativos;
+        document.getElementById('subtitulo-data').innerText = `Última atualização: ${dados.data_fechamento} (Candle Fechado às 21h)`;
+        renderizarTabela();
+      } catch (e) {
+        document.getElementById('tabela-corpo').innerHTML = 
+          '<tr><td colspan="6" style="text-align:center;color:#ef4444;">Erro ao carregar dados.json. Certifique-se de que o script gerou o ficheiro.</td></tr>';
+      }
+    }
+
+    function copiarTexto(texto) {
+      navigator.clipboard.writeText(texto);
+      alert('Ativo ' + texto + ' copiado!');
+    }
+
+    function renderizarTabela() {
+      const minVol = parseFloat(document.getElementById('filtroVol').value);
+      const maxCV = parseFloat(document.getElementById('filtroCV').value);
+      const minVar = parseFloat(document.getElementById('filtroVar').value);
+
+      const tbody = document.getElementById('tabela-corpo');
+      tbody.innerHTML = '';
+
+      // Aplica os critérios idênticos ao Dashboard da planilha
+      const filtrados = dadosCompletos.filter(item => {
+        return item.var_volume >= minVol && item.cv <= maxCV && item.var_preco >= minVar;
+      });
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Nenhum ativo atendeu aos critérios definidos no momento.</td></tr>';
+        return;
+      }
+
+      filtrados.forEach(item => {
+        const tr = document.createElement('tr');
+        const isLong = item.operacao === 'LONG';
+        const sinalHTML = isLong 
+          ? `<span class="signal-badge signal-long">● ↑↑</span>` 
+          : `<span class="signal-badge signal-short">● ↓↓</span>`;
+
+        tr.innerHTML = `
+          <td>${sinalHTML}</td>
+          <td>${item.data_alerta}</td>
+          <td>
+            <span class="asset-name">
+              ${item.ativo}.P 
+              <i class="fa-regular fa-copy copy-btn" onclick="copiarTexto('${item.ativo}')" title="Copiar"></i>
+            </span>
+          </td>
+          <td><span class="badge-strategy">BA Spread</span></td>
+          <td>${item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</td>
+          <td>${Math.round(item.volume).toLocaleString('pt-BR')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.onload = carregarDados;
+  </script>
+</body>
+</html>
