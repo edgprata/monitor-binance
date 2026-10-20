@@ -1,42 +1,41 @@
-File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 1
-    Traceback (most recent call last):
-    ^^^^^^^^^
-SyntaxError: invalid syntax. Perhaps you forgot a comma?
+File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 14
+    3. Executar o fluxo novamente e confirmar o visto verde (✓).
+                                                             ^
+SyntaxError: invalid character '✓' (U+2713)
 Error: Process completed with exit code 1.
 ```
 
 #### O que aconteceu tecnicamente?
-Na **linha 1** do ficheiro `processar_dados.py` foi colado acidentalmente o próprio texto do relatório de erro (`Traceback (most recent call last):`)[cite: 11]. Como esse texto em inglês não é um comando válido em Python, o interpretador encontrou um **`SyntaxError`** (erro de sintaxe) logo no primeiro caractere e encerrou a execução antes de iniciar o programa[cite: 11].
+Ao colar o conteúdo no ficheiro `processar_dados.py` no GitHub, foram incluídas acidentalmente algumas linhas de texto explicativo da mensagem anterior (como `3. Executar o fluxo novamente e confirmar o visto verde (✓).`) diretamente no topo do ficheiro[cite: 12]. Como essas frases não estavam delimitadas como comentários válidos de Python (usando `#` ou `"""`), o interpretador do Python tentou ler as palavras e o símbolo especial `✓` como comandos de código, gerando de imediato um **`SyntaxError`** na linha 14[cite: 12].
 
 O nosso objetivo imediato é:
-1. Limpar completamente o ficheiro `processar_dados.py`.
-2. Colocar o código Python limpo, robusto e sem nenhum texto espúrio no topo.
-3. Executar o fluxo novamente e confirmar o visto verde (✓).
+1. Limpar integralmente o ficheiro `processar_dados.py`.
+2. Assegurar que o ficheiro contenha **exclusivamente código Python puro**, sem qualquer texto de instrução misturado.
+3. Executar o fluxo e obter a conclusão com sucesso.
 
 ---
 
 ### 2. Panorama Geral da Solução
 
-O ficheiro `processar_dados.py` precisa de começar diretamente com os comentários em formato de docstring (`"""`) ou com as instruções de importação (`import os`, `import json`, etc.), sem nenhuma palavra solta antes.
+O ficheiro `processar_dados.py` é o coração do nosso sistema na nuvem e deve conter apenas a lógica de programação:
 
-O programa executará em 3 passos limpos:
-1. **Consulta à Binance com cabeçalho de proteção (`HEADERS`):** Conecta-se à API de futuros perpétuos em USDT e descarrega a lista de moedas ativas de forma segura contra bloqueios de rede.
-2. **Cálculo dos Indicadores:** Percorre as moedas, recolhe os últimos 35 candles diários fechados e calcula a Média de 20 períodos, o Desvio Padrão, o Coeficiente de Variação (CV %) e as variações de Preço e Volume.
-3. **Exportação Limpa:** Grava todos os dados calculados no ficheiro `dados.json` para que o seu site no GitHub Pages leia e desenhe a tabela automaticamente.
+1. **Importações de Bibliotecas:** Carrega módulos essenciais (`requests` para comunicar com a Binance, `pandas` para cálculos estatísticos de médias e desvios, `json` para guardar os dados e `datetime` para gestão de datas).
+2. **Consulta com Cabeçalhos de Proteção (`HEADERS`):** Faz pedidos à API oficial da Binance simulando um navegador moderno, evitando bloqueios automáticos nos servidores do GitHub Actions.
+3. **Filtro de Candles Fechados:** Ignora a vela diária em formação e trabalha apenas com os candles encerrados às 21h (00:00 UTC).
+4. **Cálculo dos Indicadores Quantitativos:**
+   * Média móvel dos 20 períodos anteriores.
+   * Desvio padrão e Coeficiente de Variação (CV %).
+   * Variação percentual do último preço e do último volume em módulo (`abs`).
+   * Classificação da operação: **`LONG`** (se Preço $\ge$ Média) ou **`SHORT`** (se Preço $<$ Média).
+5. **Gravação Limpa no `dados.json`:** Guarda a estrutura pronta para a página `index.html` desenhar a tabela.
 
 ---
 
 ### 3. Código Completo e Limpo: `processar_dados.py`
 
-Aqui está o código completo, 100% limpo e pronto para substituir o conteúdo do ficheiro:
+Copie exatamente o bloco abaixo (apenas o que está dentro do quadro de código):
 
 ```python
-"""
-Projeto: Gerador do dados.json para o Dashboard Web
-Autor: Parceiro de Programação
-Descrição: Coleta candles diários fechados da Binance Futuros e calcula os sinais.
-"""
-
 import os
 import json
 import time
@@ -51,7 +50,7 @@ BASE_URL = "https://fapi.binance.com"
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
 
-# Cabeçalho simulando um navegador moderno para evitar bloqueios de rede no GitHub Actions
+# Cabecalho simulando um navegador moderno para evitar bloqueios no GitHub Actions
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json"
@@ -59,23 +58,19 @@ HEADERS = {
 
 
 def obter_pares_futuros():
-    """
-    Etapa 1: Consulta a lista de pares perpétuos USDT com tratamento robusto de erros.
-    """
+    """Consulta a lista de contratos futuros perpetuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> A consultar lista de contratos futuros da Binance...")
+    print("-> Consultando contratos futuros perpetuos na Binance...")
 
     for tentativa in range(1, 4):
         try:
             resposta = requests.get(url, headers=HEADERS, timeout=15)
-            
             if resposta.status_code != 200:
                 print(f"[Aviso] Tentativa {tentativa}: Status HTTP {resposta.status_code}")
                 time.sleep(2)
                 continue
 
             dados = resposta.json()
-
             if not isinstance(dados, dict) or "symbols" not in dados:
                 print(f"[Aviso] Resposta sem chave 'symbols'")
                 time.sleep(2)
@@ -89,28 +84,26 @@ def obter_pares_futuros():
                 and s.get("status") == "TRADING"
             ]
 
-            print(f"-> Total de pares encontrados com sucesso: {len(pares)}")
+            print(f"-> Total de pares encontrados: {len(pares)}")
             return sorted(pares)
 
         except Exception as erro:
-            print(f"[Aviso] Falha de conexão na tentativa {tentativa}: {erro}")
+            print(f"[Aviso] Falha de conexao na tentativa {tentativa}: {erro}")
             time.sleep(2)
 
-    print("[Erro Crítico] Não foi possível obter os símbolos da Binance após 3 tentativas.")
+    print("[Erro] Falha ao obter simbolos da Binance apos 3 tentativas.")
     return []
 
 
 def obter_historico(par):
-    """
-    Etapa 2: Obtém as velas diárias fechadas de um par com cabeçalho de proteção.
-    """
+    """Obtem apenas os candles diarios fechados de um determinado par."""
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 1}
     try:
         r = requests.get(url, params=params, headers=HEADERS, timeout=10)
         if r.status_code != 200:
             return {}, {}
-            
+
         klines = r.json()
         if not isinstance(klines, list):
             return {}, {}
@@ -120,7 +113,7 @@ def obter_historico(par):
         fechamentos = {}
         volumes = {}
         for k in klines:
-            if len(k) < 8 or k[6] > agora_ms:  # Descarta o candle aberto em movimento
+            if len(k) < 8 or k[6] > agora_ms:  # Descarta o candle aberto
                 continue
             data_str = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%d/%m/%Y 21:00")
             data_iso = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
@@ -132,21 +125,19 @@ def obter_historico(par):
 
 
 def processar_e_salvar():
-    """
-    Etapa 3: Calcula médias, desvios e gera o arquivo dados.json.
-    """
+    """Calcula medias, desvios e gera o ficheiro dados.json."""
     pares = obter_pares_futuros()
     if not pares:
-        print("[Abortado] Nenhum par disponível para processamento.")
+        print("[Abortado] Nenhum par encontrado para processar.")
         return
 
-    print(f"-> A recolher dados para {len(pares)} ativos...")
+    print(f"-> Recolhendo dados para {len(pares)} ativos...")
 
     lista_resultado = []
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
-        print(f"[{i}/{len(pares)}] {par}...", end="\r")
+        print(f"[{i}/{len(pares)}] Processando {par}...", end="\r")
         p, v = obter_historico(par)
         if len(p) < PERIODO_MEDIA + 1:
             continue
@@ -191,7 +182,6 @@ def processar_e_salvar():
         "ativos": lista_resultado
     }
 
-    # Salva o arquivo dados.json na pasta do projeto
     caminho_arquivo = os.path.join(os.path.dirname(__file__), "dados.json")
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
