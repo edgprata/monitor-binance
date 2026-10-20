@@ -50,7 +50,6 @@
       margin-bottom: 10px;
     }
 
-    /* ALTERAÇÃO SOLICITADA: TÍTULO SUPERIOR ESQUERDO */
     .sidebar-title {
       font-size: 16px;
       font-weight: bold;
@@ -99,7 +98,6 @@
       padding-bottom: 12px;
     }
 
-    /* ALTERAÇÃO SOLICITADA: TÍTULO DO LADO DIREITO */
     .header-page h1 {
       font-size: 22px;
       color: #0f172a;
@@ -205,7 +203,7 @@
       background-color: #f8fafc;
     }
 
-    /* BADGES DE OPERAÇÃO */
+    /* SINAIS VISUAIS LONG / SHORT */
     .signal-badge {
       display: inline-flex;
       align-items: center;
@@ -239,15 +237,6 @@
     .copy-btn:hover {
       color: #1d4ed8;
     }
-
-    .badge-strategy {
-      background-color: #f1f5f9;
-      color: #475569;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
@@ -258,11 +247,9 @@
       <div class="sidebar-logo">
         <i class="fa-solid fa-chart-line"></i>
       </div>
-      <!-- TÍTULO SUPERIOR ESQUERDO ATUALIZADO -->
       <div class="sidebar-title">Sinais</div>
     </div>
     <ul class="sidebar-menu">
-      <!-- NOME NO MENU ATUALIZADO -->
       <li class="active"><a href="#"><i class="fa-solid fa-bolt"></i> Sinais</a></li>
       <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboards</a></li>
       <li><a href="#"><i class="fa-solid fa-bell"></i> Notificações</a></li>
@@ -272,7 +259,6 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-content">
     <div class="header-page">
-      <!-- TÍTULO DO LADO DIREITO ATUALIZADO -->
       <h1>Sinais - Gráfico Diário (21h)</h1>
       <p id="subtitulo-data">Histórico de Fechamento Diário da Binance Futuros</p>
     </div>
@@ -294,7 +280,7 @@
       <button class="btn-apply" onclick="renderizarTabela()">Atualizar Filtros</button>
     </div>
 
-    <!-- TABELA -->
+    <!-- TABELA SEM A COLUNA DE ROMPIMENTO -->
     <div class="card-table">
       <table>
         <thead>
@@ -302,13 +288,12 @@
             <th>Sinal</th>
             <th>Data Alerta</th>
             <th>Nome do Ativo USDT.P</th>
-            <th>Rompimento</th>
             <th>Preço</th>
             <th>Volume (USDT)</th>
           </tr>
         </thead>
         <tbody id="tabela-corpo">
-          <tr><td colspan="6" style="text-align:center;">A carregar dados do arquivo dados.json...</td></tr>
+          <tr><td colspan="5" style="text-align:center;">A carregar dados do arquivo dados.json...</td></tr>
         </tbody>
       </table>
     </div>
@@ -322,13 +307,13 @@
       try {
         const resposta = await fetch(urlDados);
         if (!resposta.ok) {
-          throw new Error('Código HTTP ' + resposta.status + ' (' + resposta.statusText + ')');
+          throw new Error('Código HTTP ' + resposta.status);
         }
         const dados = await resposta.json();
 
         if (!dados.ativos || dados.ativos.length === 0) {
           document.getElementById('tabela-corpo').innerHTML = 
-            '<tr><td colspan="6" style="text-align:center;color:#64748b;">O arquivo dados.json existe, mas a lista de ativos está vazia.</td></tr>';
+            '<tr><td colspan="5" style="text-align:center;color:#64748b;">Nenhum ativo disponível no arquivo dados.json.</td></tr>';
           return;
         }
 
@@ -337,9 +322,8 @@
         renderizarTabela();
       } catch (erro) {
         document.getElementById('tabela-corpo').innerHTML = 
-          `<tr><td colspan="6" style="text-align:center;color:#ef4444;padding:24px;">
-            <strong>Aviso:</strong> Não foi possível carregar o arquivo <code>dados.json</code>.<br>
-            <small style="color:#64748b;">Detalhe: ${erro.message}. Verifique se o arquivo dados.json foi gerado na raiz do repositório.</small>
+          `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:24px;">
+            Erro ao carregar dados.json (${erro.message}).
           </td></tr>`;
       }
     }
@@ -357,13 +341,12 @@
       const tbody = document.getElementById('tabela-corpo');
       tbody.innerHTML = '';
 
-      // Filtro idêntico ao Dashboard
       const filtrados = dadosCompletos.filter(item => {
         return item.var_volume >= minVol && item.cv <= maxCV && item.var_preco >= minVar;
       });
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#64748b;">Nenhum ativo atendeu aos critérios definidos no momento (Vol > ' + minVol + '%, CV < ' + maxCV + '%, Var > ' + minVar + '%). Tente valores mais suaves.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Nenhum ativo atendeu aos critérios definidos no momento.</td></tr>';
         return;
       }
 
@@ -383,7 +366,6 @@
               <i class="fa-regular fa-copy copy-btn" onclick="copiarTexto('${item.ativo}')" title="Copiar"></i>
             </span>
           </td>
-          <td><span class="badge-strategy">BA Spread</span></td>
           <td>${item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</td>
           <td>${Math.round(item.volume).toLocaleString('pt-BR')}</td>
         `;
