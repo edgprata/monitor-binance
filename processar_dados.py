@@ -1,43 +1,40 @@
-Traceback (most recent call last):
-  File "processar_dados.py", line 127, in <module>
-    processar_e_salvar()
-  File "processar_dados.py", line 64, in processar_e_salvar
-    pares = obter_pares_futuros()
-  File "processar_dados.py", line 29, in obter_pares_futuros
-    for s in dados["symbols"]
-KeyError: 'symbols'
+File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 1
+    Traceback (most recent call last):
+    ^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
 Error: Process completed with exit code 1.
 ```
 
 #### O que aconteceu tecnicamente?
-1. O script executou a função `obter_pares_futuros()` e fez uma requisição à API da Binance através da biblioteca `requests`[cite: 10].
-2. Quando tentou aceder ao campo `dados["symbols"]`, o Python devolveu o erro **`KeyError: 'symbols'`**[cite: 10]. Isso significa que o JSON retornado pela Binance **não continha a chave `"symbols"`**.
-3. **Por que a chave não veio?**
-   * Os servidores do GitHub Actions estão alojados nos data centers da nuvem (Microsoft Azure nos EUA). Em muitas requisições automáticas diretas a partir de IPs de servidores de nuvem, a Binance bloqueia temporariamente a conexão com erro `403 Forbidden` ou devolve uma mensagem de proteção/Cloudflare com a mensagem `{"code": -1003, "msg": "Too many requests..."}` ou bloqueio de região, em vez do dicionário normal de mercado.
-   * Além disso, a requisição não continha cabeçalhos HTTP de navegador (`User-Agent`), facilitando o bloqueio automático como tráfego suspeito.
+Na **linha 1** do ficheiro `processar_dados.py` foi colado acidentalmente o próprio texto do relatório de erro (`Traceback (most recent call last):`)[cite: 11]. Como esse texto em inglês não é um comando válido em Python, o interpretador encontrou um **`SyntaxError`** (erro de sintaxe) logo no primeiro caractere e encerrou a execução antes de iniciar o programa[cite: 11].
+
+O nosso objetivo imediato é:
+1. Limpar completamente o ficheiro `processar_dados.py`.
+2. Colocar o código Python limpo, robusto e sem nenhum texto espúrio no topo.
+3. Executar o fluxo novamente e confirmar o visto verde (✓).
 
 ---
 
 ### 2. Panorama Geral da Solução
 
-Para blindar o nosso coletor e garantir que funcione perfeitamente tanto no seu computador como nos servidores do GitHub Actions:
+O ficheiro `processar_dados.py` precisa de começar diretamente com os comentários em formato de docstring (`"""`) ou com as instruções de importação (`import os`, `import json`, etc.), sem nenhuma palavra solta antes.
 
-1. **Adicionar `User-Agent` simulando um navegador real:** Isso evita que a API da Binance descarte a conexão como requisição de bot.
-2. **Tratamento de exceções e verificação de resposta (`status_code` e validação de chaves):** Em vez de aceder cegamente a `dados["symbols"]`, verificamos se a chave existe e se a resposta foi bem-sucedida (`200 OK`).
-3. **Mecanismo de Retentativa (Retry) e Fallback:** Se a Binance falhar no primeiro segundo, o script tenta novamente após 2 segundos.
-4. **Verificação de segurança no `processar_dados.py`:** Se por algum motivo de rede nenhum par for retornado, o script não tenta quebrar o fluxo com erro fatal, registando uma mensagem informativa no log.
+O programa executará em 3 passos limpos:
+1. **Consulta à Binance com cabeçalho de proteção (`HEADERS`):** Conecta-se à API de futuros perpétuos em USDT e descarrega a lista de moedas ativas de forma segura contra bloqueios de rede.
+2. **Cálculo dos Indicadores:** Percorre as moedas, recolhe os últimos 35 candles diários fechados e calcula a Média de 20 períodos, o Desvio Padrão, o Coeficiente de Variação (CV %) e as variações de Preço e Volume.
+3. **Exportação Limpa:** Grava todos os dados calculados no ficheiro `dados.json` para que o seu site no GitHub Pages leia e desenhe a tabela automaticamente.
 
 ---
 
-### 3. Código Completo e Corrigido: `processar_dados.py`
+### 3. Código Completo e Limpo: `processar_dados.py`
 
-Substitua todo o conteúdo do seu ficheiro `processar_dados.py` no GitHub pelo código abaixo:
+Aqui está o código completo, 100% limpo e pronto para substituir o conteúdo do ficheiro:
 
 ```python
 """
 Projeto: Gerador do dados.json para o Dashboard Web
 Autor: Parceiro de Programação
-Correção: Tratamento contra bloqueios de IP/User-Agent e erro KeyError: 'symbols'.
+Descrição: Coleta candles diários fechados da Binance Futuros e calcula os sinais.
 """
 
 import os
@@ -73,15 +70,14 @@ def obter_pares_futuros():
             resposta = requests.get(url, headers=HEADERS, timeout=15)
             
             if resposta.status_code != 200:
-                print(f"[Aviso] Tentativa {tentativa}: Status HTTP {resposta.status_code}. Mensagem: {resposta.text[:120]}")
+                print(f"[Aviso] Tentativa {tentativa}: Status HTTP {resposta.status_code}")
                 time.sleep(2)
                 continue
 
             dados = resposta.json()
 
-            # Verificação segura para evitar o erro KeyError: 'symbols'
             if not isinstance(dados, dict) or "symbols" not in dados:
-                print(f"[Aviso] Resposta sem chave 'symbols': {dados}")
+                print(f"[Aviso] Resposta sem chave 'symbols'")
                 time.sleep(2)
                 continue
 
@@ -124,7 +120,7 @@ def obter_historico(par):
         fechamentos = {}
         volumes = {}
         for k in klines:
-            if len(k) < 8 or k[6] > agora_ms:  # Descarta o candle aberto
+            if len(k) < 8 or k[6] > agora_ms:  # Descarta o candle aberto em movimento
                 continue
             data_str = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%d/%m/%Y 21:00")
             data_iso = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
