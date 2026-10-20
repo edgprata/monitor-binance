@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import requests
 
 BASE_URL = "https://fapi.binance.com"
-HISTORICO_DIAS = 45  # Histórico estendido para permitir consultas retroativas
+HISTORICO_DIAS = 45  # Histórico para permitir consultas retroativas
 PERIODO_MEDIA = 20
 
 HEADERS = {
@@ -14,6 +14,7 @@ HEADERS = {
 }
 
 def obter_pares_futuros():
+    """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
     print("-> A consultar contratos futuros perpétuos na Binance...")
     for tentativa in range(1, 4):
@@ -40,6 +41,7 @@ def obter_pares_futuros():
     return []
 
 def obter_historico(par):
+    """Obtém candles diários fechados de um determinado par."""
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 1}
     try:
@@ -49,7 +51,7 @@ def obter_historico(par):
         klines = r.json()
         if not isinstance(klines, list):
             return []
-        
+
         agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
         serie = []
         for k in klines:
@@ -68,25 +70,32 @@ def obter_historico(par):
         return []
 
 def processar_e_salvar():
+    """Gera o banco de dados histórico para suporte retroativo."""
     pares = obter_pares_futuros()
     if not pares:
         print("[Erro] Nenhum par encontrado.")
         return
 
-    print(f"-> A processar histórico completo para {len(pares)} ativos...")
+    print(f"-> A recolher dados para {len(pares)} ativos...")
     banco_ativos = {}
-    todas_datas = set()
+    conjunto_datas = set()
 
     for i, par in enumerate(pares, 1):
-        print(f"[{i}/{len(pares)}] {par}...", end="\r")
+        print(f"[{i}/{len(pares)}] Processando {par}...", end="\r")
         serie = obter_historico(par)
         if len(serie) >= PERIODO_MEDIA + 1:
             banco_ativos[par] = serie
-            for item in serie[PERIODO_MEDIA:]:  # Apenas datas que possuem pelo menos 20 dias antes
-                todas_datas.add(item["data"])
+            # Adiciona apenas as datas que têm pelo menos 20 dias anteriores de histórico
+            for candle in serie[PERIODO_MEDIA:]:
+                conjunto_datas.add(candle["data"])
         time.sleep(0.03)
 
-    datas_ordenadas = sorted(list(todas_datas), key=lambda d: datetime.strptime(d, "%d/%m/%Y"), reverse=True)
+    # Ordena as datas da mais recente para a mais antiga
+    datas_ordenadas = sorted(
+        list(conjunto_datas),
+        key=lambda d: datetime.strptime(d, "%d/%m/%Y"),
+        reverse=True
+    )
 
     dados_finais = {
         "datas_disponiveis": datas_ordenadas,
@@ -97,7 +106,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False)
 
-    print(f"\n[SUCESSO] dados.json gerado com suporte retroativo para {len(banco_ativos)} moedas!")
+    print(f"\n[SUCESSO] dados.json gerado com {len(datas_ordenadas)} datas disponíveis e {len(banco_ativos)} moedas!")
 
 if __name__ == "__main__":
     processar_e_salvar()
