@@ -85,7 +85,7 @@
       border-left: 4px solid #3b82f6;
     }
 
-    /* CONTEÚDO PRINCIPAL */
+    /* ÁREA PRINCIPAL */
     .main-content {
       flex: 1;
       padding: 30px;
@@ -111,7 +111,7 @@
       margin-top: 4px;
     }
 
-    /* BARRA DE FILTROS E DATA RETROATIVA */
+    /* BARRA DE FILTROS E SELEÇÃO DE DATA */
     .filter-bar {
       background: white;
       border-radius: 8px;
@@ -174,7 +174,7 @@
       background-color: #2563eb;
     }
 
-    /* ÁREA DA TABELA COM ROLAGEM HORIZONTAL SUAVE */
+    /* TABELA RESPONSIVA */
     .card-table {
       background: white;
       border-radius: 8px;
@@ -188,7 +188,7 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      min-width: 600px; /* Garante que as colunas não fiquem esmagadas no telemóvel */
+      min-width: 600px;
     }
 
     thead {
@@ -219,16 +219,16 @@
       background-color: #f8fafc;
     }
 
-    /* SINAIS: APENAS BOLINHA VERDE OU VERMELHA */
+    /* SINAIS (BOLINHAS SEM SETAS) */
     .dot-long {
-      color: #10b981; /* Verde */
+      color: #10b981;
       font-size: 20px;
       line-height: 1;
       display: inline-block;
     }
 
     .dot-short {
-      color: #ef4444; /* Vermelho */
+      color: #ef4444;
       font-size: 20px;
       line-height: 1;
       display: inline-block;
@@ -253,9 +253,7 @@
       color: #1d4ed8;
     }
 
-    /* ========================================================================
-       REGRAS DE RESPONSIVIDADE PARA TELEMÓVEL / SMARTPHONE (Ecrãs até 768px)
-       ======================================================================== */
+    /* REGRAS PARA SMARTPHONES */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -318,11 +316,11 @@
       }
 
       .filter-item {
-        min-width: 45%; /* Fica em 2 colunas organizadas no celular */
+        min-width: 45%;
       }
 
       .btn-apply {
-        width: 100%; /* Botão largo e fácil de clicar no ecrã tátil */
+        width: 100%;
         margin-top: 6px;
       }
     }
@@ -330,7 +328,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL (ADAPTÁVEL) -->
+  <!-- BARRA LATERAL -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
@@ -350,11 +348,11 @@
       <p id="subtitulo-data">A carregar dados...</p>
     </div>
 
-    <!-- BARRA DE PARÂMETROS EDITÁVEIS (INCLUINDO DATA RETROATIVA) -->
+    <!-- FILTROS -->
     <div class="filter-bar">
       <div class="filter-item">
         <label>Data de Análise</label>
-        <select id="filtroData">
+        <select id="filtroData" onchange="executarAnalise()">
           <option value="">A carregar datas...</option>
         </select>
       </div>
@@ -373,7 +371,7 @@
       <button class="btn-apply" onclick="executarAnalise()">Atualizar Filtros</button>
     </div>
 
-    <!-- TABELA RESPONSIVA -->
+    <!-- TABELA -->
     <div class="card-table">
       <table>
         <thead>
@@ -396,7 +394,16 @@
     let bancoDados = null;
     const PERIODO_MEDIA = 20;
 
-    // Carrega o dados.json com o histórico completo
+    // Converte string "DD/MM/AAAA" em objeto Date para ordenação segura
+    function parseDataBR(strData) {
+      const partes = strData.split('/');
+      if (partes.length === 3) {
+        return new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      }
+      return new Date(strData);
+    }
+
+    // Carrega o banco de dados e inicializa com a última data
     async function carregarDados() {
       try {
         const resposta = await fetch('dados.json?nocache=' + new Date().getTime());
@@ -408,19 +415,27 @@
 
         if (!bancoDados.datas_disponiveis || bancoDados.datas_disponiveis.length === 0) {
           document.getElementById('tabela-corpo').innerHTML = 
-            '<tr><td colspan="5" style="text-align:center;color:#ef4444;">Nenhuma data retroativa encontrada no arquivo.</td></tr>';
+            '<tr><td colspan="5" style="text-align:center;color:#ef4444;">Nenhuma data retroativa encontrada no arquivo dados.json.</td></tr>';
           return;
         }
 
-        // Preenche o menu suspenso de datas
-        bancoDados.datas_disponiveis.forEach((d, idx) => {
+        // Garante ordenação cronológica decrescente (da mais recente para a mais antiga)
+        const datasOrdenadas = [...bancoDados.datas_disponiveis].sort((a, b) => {
+          return parseDataBR(b).getTime() - parseDataBR(a).getTime();
+        });
+
+        // Preenche o seletor com as opções
+        datasOrdenadas.forEach((d, idx) => {
           const opt = document.createElement('option');
           opt.value = d;
-          opt.innerText = idx === 0 ? `${d} (Mais Recente)` : d;
+          opt.innerText = (idx === 0) ? `${d} (Mais Recente)` : d;
           selectData.appendChild(opt);
         });
 
-        // Dispara a primeira análise para a data mais recente
+        // Define a primeira opção (mais recente) como a selecionada por defeito
+        selectData.selectedIndex = 0;
+
+        // Executa imediatamente a análise com a data mais recente
         executarAnalise();
 
       } catch (e) {
@@ -431,7 +446,7 @@
       }
     }
 
-    // Calcula média e desvio padrão amostral idêntico ao Excel
+    // Cálculo estatístico de média e desvio padrão amostral
     function calcularEstatisticas(array) {
       const n = array.length;
       if (n === 0) return { media: 0, desvio: 0 };
@@ -446,11 +461,14 @@
       alert('Ativo ' + texto + ' copiado!');
     }
 
-    // Executa o cálculo retroativo dinamicamente no navegador
+    // Análise e filtragem dinâmica dos dados
     function executarAnalise() {
       if (!bancoDados || !bancoDados.ativos) return;
 
-      const dataEscolhida = document.getElementById('filtroData').value;
+      const selectData = document.getElementById('filtroData');
+      const dataEscolhida = selectData.value;
+      if (!dataEscolhida) return;
+
       const minVol = parseFloat(document.getElementById('filtroVol').value);
       const maxCV = parseFloat(document.getElementById('filtroCV').value);
       const minVar = parseFloat(document.getElementById('filtroVar').value);
@@ -463,9 +481,9 @@
       const resultados = [];
 
       for (const [par, serie] of Object.entries(bancoDados.ativos)) {
-        // Encontra o índice da data escolhida na série histórica
+        // Encontra o candle da data selecionada
         const idxAtual = serie.findIndex(item => item.data === dataEscolhida);
-        if (idxAtual < PERIODO_MEDIA) continue; // Precisa ter pelo menos 20 dias antes
+        if (idxAtual < PERIODO_MEDIA) continue;
 
         const candleAtual = serie[idxAtual];
         const candlesAnteriores = serie.slice(idxAtual - PERIODO_MEDIA, idxAtual);
@@ -480,7 +498,7 @@
         const varPreco = estPreco.media > 0 ? Math.abs(((candleAtual.preco - estPreco.media) / estPreco.media) * 100) : 0;
         const varVol = estVol.media > 0 ? Math.abs(((candleAtual.volume - estVol.media) / estVol.media) * 100) : 0;
 
-        // Aplicação dos 3 filtros
+        // Critérios de filtro
         if (varVol >= minVol && cvPreco <= maxCV && varPreco >= minVar) {
           const operacao = candleAtual.preco >= estPreco.media ? 'LONG' : 'SHORT';
           resultados.push({
@@ -494,13 +512,12 @@
       }
 
       if (resultados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#64748b;">Nenhum ativo atendeu aos critérios definidos para a data ' + dataEscolhida + '.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#64748b;">Nenhum ativo atendeu aos critérios para ${dataEscolhida}.</td></tr>`;
         return;
       }
 
       resultados.forEach(item => {
         const tr = document.createElement('tr');
-        // Apenas a bolinha verde ou vermelha conforme solicitado
         const sinalHTML = item.operacao === 'LONG'
           ? `<span class="dot-long" title="LONG">●</span>`
           : `<span class="dot-short" title="SHORT">●</span>`;
@@ -521,6 +538,7 @@
       });
     }
 
+    // Inicialização ao carregar a página
     window.onload = carregarDados;
   </script>
 </body>
