@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sinais Quant - Monitor de Futuros Binance</title>
+  <title>Sinais - Monitor de Futuros Binance</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -37,25 +37,26 @@
     }
 
     .sidebar-logo {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
+      font-size: 32px;
       color: white;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       margin-bottom: 10px;
     }
 
+    /* ALTERAÇÃO SOLICITADA: TÍTULO SUPERIOR ESQUERDO */
     .sidebar-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: bold;
       color: #ffffff;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
 
     .sidebar-menu {
@@ -98,6 +99,7 @@
       padding-bottom: 12px;
     }
 
+    /* ALTERAÇÃO SOLICITADA: TÍTULO DO LADO DIREITO */
     .header-page h1 {
       font-size: 22px;
       color: #0f172a;
@@ -110,7 +112,7 @@
       margin-top: 4px;
     }
 
-    /* FILTROS / PARÂMETROS EDITÁVEIS NO TOPO */
+    /* FILTROS / PARÂMETROS EDITÁVEIS */
     .filter-bar {
       background: white;
       border-radius: 8px;
@@ -203,7 +205,7 @@
       background-color: #f8fafc;
     }
 
-    /* SINAIS LONG / SHORT VISUAIS */
+    /* BADGES DE OPERAÇÃO */
     .signal-badge {
       display: inline-flex;
       align-items: center;
@@ -256,23 +258,26 @@
       <div class="sidebar-logo">
         <i class="fa-solid fa-chart-line"></i>
       </div>
-      <div class="sidebar-title">Águia Spread</div>
+      <!-- TÍTULO SUPERIOR ESQUERDO ATUALIZADO -->
+      <div class="sidebar-title">Sinais</div>
     </div>
     <ul class="sidebar-menu">
-      <li class="active"><a href="#"><i class="fa-solid fa-bolt"></i> Sinais Milionários</a></li>
+      <!-- NOME NO MENU ATUALIZADO -->
+      <li class="active"><a href="#"><i class="fa-solid fa-bolt"></i> Sinais</a></li>
       <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboards</a></li>
       <li><a href="#"><i class="fa-solid fa-bell"></i> Notificações</a></li>
     </ul>
   </aside>
 
-  <!-- CONTEÚDO -->
+  <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-content">
     <div class="header-page">
-      <h1>Sinais Milionários - Gráfico Diário (21h)</h1>
+      <!-- TÍTULO DO LADO DIREITO ATUALIZADO -->
+      <h1>Sinais - Gráfico Diário (21h)</h1>
       <p id="subtitulo-data">Histórico de Fechamento Diário da Binance Futuros</p>
     </div>
 
-    <!-- PARÂMETROS EDITÁVEIS DIRETAMENTE NA TELA -->
+    <!-- PARÂMETROS EDITÁVEIS -->
     <div class="filter-bar">
       <div class="filter-item">
         <label>Vol vs Média (> %)</label>
@@ -303,7 +308,7 @@
           </tr>
         </thead>
         <tbody id="tabela-corpo">
-          <tr><td colspan="6" style="text-align:center;">A carregar dados...</td></tr>
+          <tr><td colspan="6" style="text-align:center;">A carregar dados do arquivo dados.json...</td></tr>
         </tbody>
       </table>
     </div>
@@ -312,17 +317,30 @@
   <script>
     let dadosCompletos = [];
 
-    // Carrega o ficheiro dados.json gerado automaticamente pelo Python
     async function carregarDados() {
+      const urlDados = 'dados.json?nocache=' + new Date().getTime();
       try {
-        const resposta = await fetch('dados.json?t=' + new Date().getTime());
+        const resposta = await fetch(urlDados);
+        if (!resposta.ok) {
+          throw new Error('Código HTTP ' + resposta.status + ' (' + resposta.statusText + ')');
+        }
         const dados = await resposta.json();
+
+        if (!dados.ativos || dados.ativos.length === 0) {
+          document.getElementById('tabela-corpo').innerHTML = 
+            '<tr><td colspan="6" style="text-align:center;color:#64748b;">O arquivo dados.json existe, mas a lista de ativos está vazia.</td></tr>';
+          return;
+        }
+
         dadosCompletos = dados.ativos;
         document.getElementById('subtitulo-data').innerText = `Última atualização: ${dados.data_fechamento} (Candle Fechado às 21h)`;
         renderizarTabela();
-      } catch (e) {
+      } catch (erro) {
         document.getElementById('tabela-corpo').innerHTML = 
-          '<tr><td colspan="6" style="text-align:center;color:#ef4444;">Erro ao carregar dados.json. Certifique-se de que o script gerou o ficheiro.</td></tr>';
+          `<tr><td colspan="6" style="text-align:center;color:#ef4444;padding:24px;">
+            <strong>Aviso:</strong> Não foi possível carregar o arquivo <code>dados.json</code>.<br>
+            <small style="color:#64748b;">Detalhe: ${erro.message}. Verifique se o arquivo dados.json foi gerado na raiz do repositório.</small>
+          </td></tr>`;
       }
     }
 
@@ -339,13 +357,13 @@
       const tbody = document.getElementById('tabela-corpo');
       tbody.innerHTML = '';
 
-      // Aplica os critérios idênticos ao Dashboard da planilha
+      // Filtro idêntico ao Dashboard
       const filtrados = dadosCompletos.filter(item => {
         return item.var_volume >= minVol && item.cv <= maxCV && item.var_preco >= minVar;
       });
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Nenhum ativo atendeu aos critérios definidos no momento.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#64748b;">Nenhum ativo atendeu aos critérios definidos no momento (Vol > ' + minVol + '%, CV < ' + maxCV + '%, Var > ' + minVar + '%). Tente valores mais suaves.</td></tr>';
         return;
       }
 
