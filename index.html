@@ -20,7 +20,7 @@
       color: #334155;
     }
 
-    /* BARRA LATERAL (DESKTOP) */
+    /* BARRA LATERAL (SIDEBAR) */
     .sidebar {
       width: 250px;
       background-color: #1a0b2e;
@@ -111,7 +111,7 @@
       margin-top: 4px;
     }
 
-    /* BARRA DE FILTROS E SELEÇÃO DE DATA */
+    /* FILTROS E SELEÇÃO DE DATA */
     .filter-bar {
       background: white;
       border-radius: 8px;
@@ -253,7 +253,7 @@
       color: #1d4ed8;
     }
 
-    /* REGRAS PARA SMARTPHONES */
+    /* RESPONSIVIDADE TELEMÓVEL */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -348,7 +348,7 @@
       <p id="subtitulo-data">A carregar dados...</p>
     </div>
 
-    <!-- FILTROS -->
+    <!-- BARRA DE FILTROS -->
     <div class="filter-bar">
       <div class="filter-item">
         <label>Data de Análise</label>
@@ -394,7 +394,6 @@
     let bancoDados = null;
     const PERIODO_MEDIA = 20;
 
-    // Converte string "DD/MM/AAAA" em objeto Date para ordenação segura
     function parseDataBR(strData) {
       const partes = strData.split('/');
       if (partes.length === 3) {
@@ -403,40 +402,37 @@
       return new Date(strData);
     }
 
-    // Carrega o banco de dados e inicializa com a última data
     async function carregarDados() {
       try {
-        const resposta = await fetch('dados.json?nocache=' + new Date().getTime());
+        const resposta = await fetch('dados.json?t=' + new Date().getTime());
         if (!resposta.ok) throw new Error('Código HTTP ' + resposta.status);
         bancoDados = await resposta.json();
 
         const selectData = document.getElementById('filtroData');
         selectData.innerHTML = '';
 
-        if (!bancoDados.datas_disponiveis || bancoDados.datas_disponiveis.length === 0) {
+        // Tratamento de compatibilidade: se o arquivo for o formato retroativo novo
+        if (bancoDados.datas_disponiveis && bancoDados.datas_disponiveis.length > 0) {
+          const datasOrdenadas = [...bancoDados.datas_disponiveis].sort((a, b) => {
+            return parseDataBR(b).getTime() - parseDataBR(a).getTime();
+          });
+
+          datasOrdenadas.forEach((d, idx) => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.innerText = (idx === 0) ? `${d} (Mais Recente)` : d;
+            selectData.appendChild(opt);
+          });
+
+          // Define a última data fechada como padrão imediato
+          selectData.selectedIndex = 0;
+          executarAnalise();
+        } else {
           document.getElementById('tabela-corpo').innerHTML = 
-            '<tr><td colspan="5" style="text-align:center;color:#ef4444;">Nenhuma data retroativa encontrada no arquivo dados.json.</td></tr>';
-          return;
+            '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:20px;">' +
+            'O arquivo dados.json ainda está no formato anterior. Execute o fluxo no Actions para gerar a base de dados retroativa.' +
+            '</td></tr>';
         }
-
-        // Garante ordenação cronológica decrescente (da mais recente para a mais antiga)
-        const datasOrdenadas = [...bancoDados.datas_disponiveis].sort((a, b) => {
-          return parseDataBR(b).getTime() - parseDataBR(a).getTime();
-        });
-
-        // Preenche o seletor com as opções
-        datasOrdenadas.forEach((d, idx) => {
-          const opt = document.createElement('option');
-          opt.value = d;
-          opt.innerText = (idx === 0) ? `${d} (Mais Recente)` : d;
-          selectData.appendChild(opt);
-        });
-
-        // Define a primeira opção (mais recente) como a selecionada por defeito
-        selectData.selectedIndex = 0;
-
-        // Executa imediatamente a análise com a data mais recente
-        executarAnalise();
 
       } catch (e) {
         document.getElementById('tabela-corpo').innerHTML = 
@@ -446,7 +442,6 @@
       }
     }
 
-    // Cálculo estatístico de média e desvio padrão amostral
     function calcularEstatisticas(array) {
       const n = array.length;
       if (n === 0) return { media: 0, desvio: 0 };
@@ -461,7 +456,6 @@
       alert('Ativo ' + texto + ' copiado!');
     }
 
-    // Análise e filtragem dinâmica dos dados
     function executarAnalise() {
       if (!bancoDados || !bancoDados.ativos) return;
 
@@ -481,7 +475,6 @@
       const resultados = [];
 
       for (const [par, serie] of Object.entries(bancoDados.ativos)) {
-        // Encontra o candle da data selecionada
         const idxAtual = serie.findIndex(item => item.data === dataEscolhida);
         if (idxAtual < PERIODO_MEDIA) continue;
 
@@ -498,7 +491,6 @@
         const varPreco = estPreco.media > 0 ? Math.abs(((candleAtual.preco - estPreco.media) / estPreco.media) * 100) : 0;
         const varVol = estVol.media > 0 ? Math.abs(((candleAtual.volume - estVol.media) / estVol.media) * 100) : 0;
 
-        // Critérios de filtro
         if (varVol >= minVol && cvPreco <= maxCV && varPreco >= minVar) {
           const operacao = candleAtual.preco >= estPreco.media ? 'LONG' : 'SHORT';
           resultados.push({
@@ -538,7 +530,6 @@
       });
     }
 
-    // Inicialização ao carregar a página
     window.onload = carregarDados;
   </script>
 </body>
