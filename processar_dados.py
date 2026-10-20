@@ -1,39 +1,42 @@
-File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 14
+File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 2
     3. Executar o fluxo novamente e confirmar o visto verde (✓).
                                                              ^
 SyntaxError: invalid character '✓' (U+2713)
 Error: Process completed with exit code 1.
-```
+```[cite: 14]
 
 #### O que aconteceu tecnicamente?
-Ao colar o conteúdo no ficheiro `processar_dados.py` no GitHub, foram incluídas acidentalmente algumas linhas de texto explicativo da mensagem anterior (como `3. Executar o fluxo novamente e confirmar o visto verde (✓).`) diretamente no topo do ficheiro[cite: 12]. Como essas frases não estavam delimitadas como comentários válidos de Python (usando `#` ou `"""`), o interpretador do Python tentou ler as palavras e o símbolo especial `✓` como comandos de código, gerando de imediato um **`SyntaxError`** na linha 14[cite: 12].
+Na tentativa de edição anterior, o texto explicativo continuou presente no ficheiro `processar_dados.py`, agora na **linha 2**[cite: 14]. Quando o Python tenta executar o programa, ele encontra a frase em texto corrido e o caractere especial `✓`, parando imediatamente com um **`SyntaxError`**[cite: 14].
 
-O nosso objetivo imediato é:
-1. Limpar integralmente o ficheiro `processar_dados.py`.
-2. Assegurar que o ficheiro contenha **exclusivamente código Python puro**, sem qualquer texto de instrução misturado.
-3. Executar o fluxo e obter a conclusão com sucesso.
+Além disso, na primeira imagem observamos os avisos de descontinuação relativos ao ficheiro `.github/workflows/atualizar_diario.yml`.
+
+O nosso objetivo claro agora é:
+1. Deixar o ficheiro `processar_dados.py` limpo e funcional, sem nenhuma linha de texto de instruções.
+2. Atualizar o ficheiro `.github/workflows/atualizar_diario.yml` com as versões mais recentes das ações (`actions/checkout@v4` e `actions/setup-python@v5`)[cite: 13].
+3. Executar o fluxo e obter a conclusão com sucesso (visto verde).
 
 ---
 
 ### 2. Panorama Geral da Solução
 
-O ficheiro `processar_dados.py` é o coração do nosso sistema na nuvem e deve conter apenas a lógica de programação:
+Vamos resolver isto em duas etapas diretas no GitHub:
 
-1. **Importações de Bibliotecas:** Carrega módulos essenciais (`requests` para comunicar com a Binance, `pandas` para cálculos estatísticos de médias e desvios, `json` para guardar os dados e `datetime` para gestão de datas).
-2. **Consulta com Cabeçalhos de Proteção (`HEADERS`):** Faz pedidos à API oficial da Binance simulando um navegador moderno, evitando bloqueios automáticos nos servidores do GitHub Actions.
-3. **Filtro de Candles Fechados:** Ignora a vela diária em formação e trabalha apenas com os candles encerrados às 21h (00:00 UTC).
-4. **Cálculo dos Indicadores Quantitativos:**
-   * Média móvel dos 20 períodos anteriores.
-   * Desvio padrão e Coeficiente de Variação (CV %).
-   * Variação percentual do último preço e do último volume em módulo (`abs`).
-   * Classificação da operação: **`LONG`** (se Preço $\ge$ Média) ou **`SHORT`** (se Preço $<$ Média).
-5. **Gravação Limpa no `dados.json`:** Guarda a estrutura pronta para a página `index.html` desenhar a tabela.
+1. **Substituição Limpa do `processar_dados.py`:**
+   O ficheiro deve começar imediatamente com `import os` na linha 1. O script:
+   * Conecta-se à API de futuros da Binance com cabeçalhos HTTP que simulam um navegador comum.
+   * Filtra estritamente os candles diários já encerrados às 21h (00:00 UTC).
+   * Calcula a média móvel de 20 períodos, o desvio padrão, o coeficiente de variação (CV %) e as variações de preço e volume em módulo (`abs`).
+   * Salva o resultado no ficheiro `dados.json`.
+2. **Atualização do `atualizar_diario.yml`:**
+   Garante o uso das ações atualizadas e define explicitamente o Python 3.11, eliminando todos os avisos mostrados nas anotações[cite: 13].
 
 ---
 
-### 3. Código Completo e Limpo: `processar_dados.py`
+### 3. Código Completo dos Ficheiros
 
-Copie exatamente o bloco abaixo (apenas o que está dentro do quadro de código):
+#### Ficheiro 1: `processar_dados.py`
+
+Copie **exclusivamente** o código contido no bloco abaixo (a primeira linha deve ser `import os`):
 
 ```python
 import os
