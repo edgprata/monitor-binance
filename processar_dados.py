@@ -1,43 +1,3 @@
-File "/home/runner/work/monitor-binance/monitor-binance/processar_dados.py", line 2
-    3. Executar o fluxo novamente e confirmar o visto verde (✓).
-                                                             ^
-SyntaxError: invalid character '✓' (U+2713)
-Error: Process completed with exit code 1.
-```[cite: 14]
-
-#### O que aconteceu tecnicamente?
-Na tentativa de edição anterior, o texto explicativo continuou presente no ficheiro `processar_dados.py`, agora na **linha 2**[cite: 14]. Quando o Python tenta executar o programa, ele encontra a frase em texto corrido e o caractere especial `✓`, parando imediatamente com um **`SyntaxError`**[cite: 14].
-
-Além disso, na primeira imagem observamos os avisos de descontinuação relativos ao ficheiro `.github/workflows/atualizar_diario.yml`.
-
-O nosso objetivo claro agora é:
-1. Deixar o ficheiro `processar_dados.py` limpo e funcional, sem nenhuma linha de texto de instruções.
-2. Atualizar o ficheiro `.github/workflows/atualizar_diario.yml` com as versões mais recentes das ações (`actions/checkout@v4` e `actions/setup-python@v5`)[cite: 13].
-3. Executar o fluxo e obter a conclusão com sucesso (visto verde).
-
----
-
-### 2. Panorama Geral da Solução
-
-Vamos resolver isto em duas etapas diretas no GitHub:
-
-1. **Substituição Limpa do `processar_dados.py`:**
-   O ficheiro deve começar imediatamente com `import os` na linha 1. O script:
-   * Conecta-se à API de futuros da Binance com cabeçalhos HTTP que simulam um navegador comum.
-   * Filtra estritamente os candles diários já encerrados às 21h (00:00 UTC).
-   * Calcula a média móvel de 20 períodos, o desvio padrão, o coeficiente de variação (CV %) e as variações de preço e volume em módulo (`abs`).
-   * Salva o resultado no ficheiro `dados.json`.
-2. **Atualização do `atualizar_diario.yml`:**
-   Garante o uso das ações atualizadas e define explicitamente o Python 3.11, eliminando todos os avisos mostrados nas anotações[cite: 13].
-
----
-
-### 3. Código Completo dos Ficheiros
-
-#### Ficheiro 1: `processar_dados.py`
-
-Copie **exclusivamente** o código contido no bloco abaixo (a primeira linha deve ser `import os`):
-
 ```python
 import os
 import json
@@ -53,7 +13,7 @@ BASE_URL = "https://fapi.binance.com"
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
 
-# Cabecalho simulando um navegador moderno para evitar bloqueios no GitHub Actions
+# Cabecalho simulando navegador para evitar bloqueios de rede no GitHub Actions
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json"
