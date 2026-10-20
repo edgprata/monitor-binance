@@ -1,0 +1,35 @@
+name: Atualizar Dashboard Binance Diario
+
+on:
+  schedule:
+    # 00:05 UTC equivale às 21:05 do horário de Brasília (logo após o fechamento diário)
+    - cron: '5 0 * * *'
+  workflow_dispatch: # Permite disparar manualmente com um clique a qualquer momento
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Instalar bibliotecas
+        run: pip install requests pandas
+
+      - name: Executar coleta da Binance
+        run: python processar_dados.py
+
+      - name: Fazer commit e publicar atualização
+        run: |
+          git config --global user.name 'bot-binance'
+          git config --global user.email 'bot@binance.com'
+          git add dados.json
+          git commit -m "Atualizacao diaria automatica dos sinais" || exit 0
+          git push
