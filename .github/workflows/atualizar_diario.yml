@@ -4,20 +4,22 @@ on:
   schedule:
     # 00:05 UTC equivale às 21:05 no horário de Brasília (UTC-3)
     - cron: '5 0 * * *'
-  workflow_dispatch: # Permite disparar manualmente através do botão 'Run workflow'
+  workflow_dispatch:
 
 jobs:
   atualizar:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Autorização explícita para salvar ficheiros no repositório
+      contents: write
 
     steps:
       - name: Baixar código do repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar o Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
       - name: Instalar bibliotecas necessárias
         run: pip install requests pandas
