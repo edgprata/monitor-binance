@@ -1,7 +1,7 @@
 import os
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import requests
 import pandas as pd
 
@@ -11,6 +11,9 @@ import pandas as pd
 BASE_URL = "https://fapi.binance.com"
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
+
+# Fuso horário oficial de Brasília (UTC-3)
+FUSO_BRT = timezone(timedelta(hours=-3))
 
 # Cabeçalho simulando navegador moderno para evitar bloqueios de rede no GitHub Actions
 HEADERS = {
@@ -22,7 +25,7 @@ HEADERS = {
 def obter_pares_futuros():
     """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> Consultando contratos futuros perpétuos...")
+    print("-> A consultar contratos futuros perpétuos...")
 
     for tentativa in range(1, 4):
         try:
@@ -55,11 +58,10 @@ def obter_pares_futuros():
 
 def obter_historico(par):
     """
-    Obtém o histórico diário descartando com segurança o candle atual em aberto.
+    Obtém candles diários fechados convertendo o horário de encerramento para o fuso de Brasília.
     """
     url = f"{BASE_URL}/fapi/v1/klines"
-    # Pede histórico suficiente para cobrir os 20 períodos e o candle em andamento
-    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
+    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 5}
 
     try:
         r = requests.get(url, params=params, headers=HEADERS, timeout=10)
@@ -67,22 +69,28 @@ def obter_historico(par):
             return {}, {}
 
         klines = r.json()
-        if not isinstance(klines, list) or len(klines) < PERIODO_MEDIA + 2:
+        if not isinstance(klines, list):
             return {}, {}
 
-        # O último candle da lista (klines[-1]) é SEMPRE o candle aberto de hoje.
-        # Descartamos o último para ficar estritamente com os candles já fechados.
-        klines_fechados = klines[:-1]
+        agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
 
         fechamentos = {}
         volumes = {}
 
-        for k in klines_fechados:
+        for k in klines:
             if len(k) < 8:
                 continue
-            # Converte o timestamp de abertura (k[0]) para a data do fechamento diário
-            data_str = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%d/%m/%Y")
-            data_iso = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
+
+            tempo_fechamento_ms = k[6]
+
+            # Descarta o candle aberto que ainda está em andamento
+            if tempo_fechamento_ms > agora_ms:
+                continue
+
+            # Converte o timestamp de fechamento para o Horário de Brasília (UTC-3)
+            data_fechamento_dt = datetime.fromtimestamp(tempo_fechamento_ms / 1000, tz=FUSO_BRT)
+            data_str = data_fechamento_dt.strftime("%d/%m/%Y")
+            data_iso = data_fechamento_dt.strftime("%Y-%m-%d")
 
             fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
             volumes[data_iso] = float(k[7])
@@ -108,7 +116,6 @@ def processar_e_salvar():
         print(f"[{i}/{len(pares)}] {par}...", end="\r")
         p, v = obter_historico(par)
 
-        # Garante pelo menos 20 períodos anteriores + 1 período atual fechado
         if len(p) < PERIODO_MEDIA + 1:
             continue
 
@@ -148,7 +155,7 @@ def processar_e_salvar():
         time.sleep(0.03)
 
     dados_finais = {
-        "data_fechamento": data_recente_label or datetime.now(timezone.utc).strftime("%d/%m/%Y"),
+        "data_fechamento": data_recente_label or datetime.now(FUSO_BRT).strftime("%d/%m/%Y"),
         "ativos": lista_resultado
     }
 
@@ -156,7 +163,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado com data {data_recente_label} e {len(lista_resultado)} ativos processados!")
+    print(f"\n[SUCESSO] dados.json gerado com data {data_recente_label} e {len(lista_resultado)} ativos!")
 
 
 if __name__ == "__main__":
