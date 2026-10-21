@@ -5,18 +5,23 @@ from datetime import datetime, timezone
 import requests
 import pandas as pd
 
+# ==============================================================================
+# CONFIGURAÇÕES GERAIS
+# ==============================================================================
 BASE_URL = "https://fapi.binance.com"
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
 
+# Cabeçalho simulando navegador real para evitar bloqueios no GitHub Actions
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json"
 }
 
 def obter_pares_futuros():
+    """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> Consultando contratos futuros...")
+    print("-> A consultar contratos futuros perpétuos...")
     for tentativa in range(1, 4):
         try:
             resposta = requests.get(url, headers=HEADERS, timeout=15)
@@ -41,6 +46,7 @@ def obter_pares_futuros():
     return []
 
 def obter_historico(par):
+    """Obtém apenas os candles diários fechados de um determinado par."""
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 1}
     try:
@@ -54,9 +60,9 @@ def obter_historico(par):
         fechamentos = {}
         volumes = {}
         for k in klines:
-            if len(k) < 8 or k[6] > agora_ms:
+            if len(k) < 8 or k[6] > agora_ms:  # Descarta o candle aberto
                 continue
-            data_str = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%d/%m/%Y 21:00")
+            data_str = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%d/%m/%Y")
             data_iso = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
             fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
             volumes[data_iso] = float(k[7])
@@ -65,11 +71,12 @@ def obter_historico(par):
         return {}, {}
 
 def processar_e_salvar():
+    """Calcula médias, desvios e gera o dados.json com a lista de ativos."""
     pares = obter_pares_futuros()
     if not pares:
         print("[Erro] Nenhum par encontrado.")
         return
-    print(f"-> Processando {len(pares)} ativos...")
+    print(f"-> A processar {len(pares)} ativos...")
     lista_resultado = []
     data_recente_label = ""
     for i, par in enumerate(pares, 1):
