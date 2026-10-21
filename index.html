@@ -84,7 +84,7 @@
       border-left: 4px solid #3b82f6;
     }
 
-    /* CONTEÚDO PRINCIPAL */
+    /* ÁREA PRINCIPAL */
     .main-content {
       flex: 1;
       padding: 30px;
@@ -169,7 +169,7 @@
       background-color: #2563eb;
     }
 
-    /* TABELA DE SINAIS */
+    /* TABELA RESPONSIVA */
     .card-table {
       background: white;
       border-radius: 8px;
@@ -183,7 +183,7 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      min-width: 560px; /* Garante espaço confortável para todas as colunas */
+      min-width: 540px;
     }
 
     thead {
@@ -214,16 +214,16 @@
       background-color: #f8fafc;
     }
 
-    /* SINAIS: APENAS A BOLINHA VERDE OU VERMELHA */
+    /* SINAIS (APENAS BOLINHA VERDE OU VERMELHA) */
     .dot-long {
-      color: #10b981; /* Verde sólido */
+      color: #10b981;
       font-size: 18px;
       line-height: 1;
       display: inline-block;
     }
 
     .dot-short {
-      color: #ef4444; /* Vermelho sólido */
+      color: #ef4444;
       font-size: 18px;
       line-height: 1;
       display: inline-block;
@@ -248,7 +248,7 @@
       color: #1d4ed8;
     }
 
-    /* REGRAS ESPECÍFICAS PARA CELULARES (Telas até 768px) */
+    /* REGRAS DE RESPONSIVIDADE PARA CELULAR */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -323,7 +323,7 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL (SE TRANSFORMA EM TOPO NO CELULAR) -->
+  <!-- BARRA LATERAL (CABEÇALHO NO CELULAR) -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
@@ -383,6 +383,89 @@
     let dadosCompletos = [];
 
     async function carregarDados() {
+      // O parâmetro ?t= forçado evita que o navegador leia cache antigo
       const urlDados = 'dados.json?t=' + new Date().getTime();
       try {
-        const resposta
+        const resposta = await fetch(urlDados);
+        if (!resposta.ok) {
+          throw new Error('Código HTTP ' + resposta.status);
+        }
+        const dados = await resposta.json();
+
+        // Verificação segura: garante que dados.ativos existe e é uma lista
+        if (!dados.ativos || !Array.isArray(dados.ativos) || dados.ativos.length === 0) {
+          document.getElementById('tabela-corpo').innerHTML = 
+            '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:20px;">' +
+            'O arquivo dados.json precisa de ser atualizado pelo GitHub Actions.' +
+            '</td></tr>';
+          return;
+        }
+
+        dadosCompletos = dados.ativos;
+        
+        // Remove a hora mantendo apenas a data
+        const dataApenas = (dados.data_fechamento || '').split(' ')[0];
+        document.getElementById('subtitulo-data').innerText = `Última atualização: ${dataApenas} (Fechamento diário às 21h)`;
+        
+        renderizarTabela();
+      } catch (erro) {
+        document.getElementById('tabela-corpo').innerHTML = 
+          `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:24px;">
+            Erro ao carregar dados.json (${erro.message}). Verifique se o arquivo existe na raiz do repositório.
+          </td></tr>`;
+      }
+    }
+
+    function copiarTexto(texto) {
+      navigator.clipboard.writeText(texto);
+      alert('Ativo ' + texto + ' copiado!');
+    }
+
+    function renderizarTabela() {
+      const minVol = parseFloat(document.getElementById('filtroVol').value);
+      const maxCV = parseFloat(document.getElementById('filtroCV').value);
+      const minVar = parseFloat(document.getElementById('filtroVar').value);
+
+      const tbody = document.getElementById('tabela-corpo');
+      tbody.innerHTML = '';
+
+      const filtrados = dadosCompletos.filter(item => {
+        return item.var_volume >= minVol && item.cv <= maxCV && item.var_preco >= minVar;
+      });
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Nenhum ativo atendeu aos critérios definidos no momento.</td></tr>';
+        return;
+      }
+
+      filtrados.forEach(item => {
+        const tr = document.createElement('tr');
+        
+        // SINAL: Apenas a bolinha sólida verde (LONG) ou vermelha (SHORT)
+        const sinalHTML = item.operacao === 'LONG'
+          ? `<span class="dot-long" title="LONG">●</span>`
+          : `<span class="dot-short" title="SHORT">●</span>`;
+
+        // DATA: Apenas a data sem horário
+        const dataSemHora = (item.data_alerta || '').split(' ')[0];
+
+        tr.innerHTML = `
+          <td style="text-align:center;">${sinalHTML}</td>
+          <td>${dataSemHora}</td>
+          <td>
+            <span class="asset-name">
+              ${item.ativo}.P 
+              <i class="fa-regular fa-copy copy-btn" onclick="copiarTexto('${item.ativo}')" title="Copiar"></i>
+            </span>
+          </td>
+          <td>${item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</td>
+          <td>${Math.round(item.volume).toLocaleString('pt-BR')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.onload = carregarDados;
+  </script>
+</body>
+</html>
