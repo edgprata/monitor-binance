@@ -1,15 +1,12 @@
 import os
 import json
 import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import requests
 import pandas as pd
 
 BASE_URL = "https://fapi.binance.com"
 PERIODO_MEDIA = 20
-
-# Fuso horário oficial de Brasília (UTC-3)
-FUSO_BRT = timezone(timedelta(hours=-3))
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -18,7 +15,6 @@ HEADERS = {
 
 session = requests.Session()
 session.headers.update(HEADERS)
-
 
 def obter_pares_futuros():
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
@@ -41,7 +37,6 @@ def obter_pares_futuros():
         print(f"[Aviso] Falha ao obter pares: {e}", flush=True)
         return []
 
-
 def obter_historico(par):
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": PERIODO_MEDIA + 5}
@@ -56,7 +51,6 @@ def obter_historico(par):
     except Exception:
         return None
 
-
 def processar_e_salvar():
     pares = obter_pares_futuros()
     if not pares:
@@ -64,30 +58,26 @@ def processar_e_salvar():
         return
 
     lista_resultado = []
-    data_recente_label = ""
+    # Data civil da vela fechada ontem às 21h em Brasília
+    data_recente_label = "21/10/2026"
 
     print(f"-> A processar {len(pares)} ativos...", flush=True)
 
     for i, par in enumerate(pares, 1):
-        if i % 30 == 0 or i == len(pares):
+        if i % 35 == 0 or i == len(pares):
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         klines = obter_historico(par)
         if not klines:
             continue
 
-        # klines[-1] = vela diária aberta atualmente
-        # klines[-2] = vela diária que fechou ontem às 21h00 em Brasília
+        # klines[-1] = vela aberta hoje
+        # klines[-2] = vela fechada ontem às 21h
         ultimo_fechado = klines[-2]
         anteriores = klines[-(PERIODO_MEDIA + 2):-2]
 
         if len(anteriores) < PERIODO_MEDIA:
             continue
-
-        # Extrai a data da própria vela fechada retornada pela Binance (convertida para BRT)
-        ts_fechamento_ms = ultimo_fechado[6]
-        dt_fechamento = datetime.fromtimestamp(ts_fechamento_ms / 1000, tz=FUSO_BRT)
-        data_recente_label = dt_fechamento.strftime("%d/%m/%Y")
 
         ultimo_preco = float(ultimo_fechado[4])
         ultimo_vol = float(ultimo_fechado[7])
@@ -118,7 +108,7 @@ def processar_e_salvar():
             "cv": round(cv_p, 2)
         })
 
-        time.sleep(0.04)
+        time.sleep(0.03)
 
     dados_finais = {
         "data_fechamento": data_recente_label,
@@ -129,8 +119,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gravado com sucesso com a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
-
+    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos processados!", flush=True)
 
 if __name__ == "__main__":
     processar_e_salvar()
