@@ -8,7 +8,7 @@ import pandas as pd
 BASE_URL = "https://fapi.binance.com"
 PERIODO_MEDIA = 20
 
-# Fuso horário de Brasília (UTC-3)
+# Fuso horário oficial de Brasília (UTC-3)
 FUSO_BRT = timezone(timedelta(hours=-3))
 
 HEADERS = {
@@ -16,11 +16,15 @@ HEADERS = {
     "Accept": "application/json"
 }
 
+session = requests.Session()
+session.headers.update(HEADERS)
+
+
 def obter_pares_futuros():
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
     print("-> A consultar lista de contratos futuros...", flush=True)
     try:
-        r = requests.get(url, headers=HEADERS, timeout=15)
+        r = session.get(url, timeout=15)
         if r.status_code != 200:
             return []
         dados = r.json()
@@ -37,11 +41,12 @@ def obter_pares_futuros():
         print(f"[Aviso] Falha ao obter pares: {e}", flush=True)
         return []
 
+
 def obter_historico(par):
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": PERIODO_MEDIA + 5}
     try:
-        r = requests.get(url, params=params, headers=HEADERS, timeout=8)
+        r = session.get(url, params=params, timeout=8)
         if r.status_code != 200:
             return None
         klines = r.json()
@@ -51,24 +56,17 @@ def obter_historico(par):
     except Exception:
         return None
 
+
 def processar_e_salvar():
     pares = obter_pares_futuros()
     if not pares:
-        print("[Erro] Nenhum par disponível para processamento.", flush=True)
+        print("[Erro] Nenhum par encontrado.", flush=True)
         return
 
-    # Determina a data civil do fechamento encerrado às 21h em Brasília
-    agora_brt = datetime.now(FUSO_BRT)
-    if agora_brt.hour < 21:
-        data_fechamento_oficial = (agora_brt - timedelta(days=1)).strftime("%d/%m/%Y")
-    else:
-        data_fechamento_oficial = agora_brt.strftime("%d/%m/%Y")
-
-    data_recente_label = data_fechamento_oficial
-    print(f"-> Data de referência do candle fechado: {data_recente_label}", flush=True)
-    print(f"-> A processar {len(pares)} ativos...", flush=True)
-
     lista_resultado = []
+    data_recente_label = ""
+
+    print(f"-> A processar {len(pares)} ativos...", flush=True)
 
     for i, par in enumerate(pares, 1):
         if i % 30 == 0 or i == len(pares):
@@ -78,13 +76,18 @@ def processar_e_salvar():
         if not klines:
             continue
 
-        # klines[-1] = candle aberto de hoje
-        # klines[-2] = último candle fechado às 21h BRT
+        # klines[-1] = vela diária aberta atualmente
+        # klines[-2] = vela diária que fechou ontem às 21h00 em Brasília
         ultimo_fechado = klines[-2]
         anteriores = klines[-(PERIODO_MEDIA + 2):-2]
 
         if len(anteriores) < PERIODO_MEDIA:
             continue
+
+        # Extrai a data da própria vela fechada retornada pela Binance (convertida para BRT)
+        ts_fechamento_ms = ultimo_fechado[6]
+        dt_fechamento = datetime.fromtimestamp(ts_fechamento_ms / 1000, tz=FUSO_BRT)
+        data_recente_label = dt_fechamento.strftime("%d/%m/%Y")
 
         ultimo_preco = float(ultimo_fechado[4])
         ultimo_vol = float(ultimo_fechado[7])
@@ -126,7 +129,8 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos salvos!", flush=True)
+    print(f"\n[SUCESSO] dados.json gravado com sucesso com a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
+
 
 if __name__ == "__main__":
     processar_e_salvar()
