@@ -1,11 +1,11 @@
 import os
 import json
+import time
 from datetime import datetime, timezone, timedelta
 import requests
 import pandas as pd
 
 BASE_URL = "https://fapi.binance.com"
-HISTORICO_DIAS = 30
 PERIODO_MEDIA = 20
 
 # Fuso horário de Brasília (UTC-3)
@@ -16,16 +16,11 @@ HEADERS = {
     "Accept": "application/json"
 }
 
-# Sessão persistente para acelerar drasticamente as requisições
-session = requests.Session()
-session.headers.update(HEADERS)
-
-
 def obter_pares_futuros():
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> A consultar lista de contratos futuros...")
+    print("-> A consultar lista de contratos futuros...", flush=True)
     try:
-        r = session.get(url, timeout=15)
+        r = requests.get(url, headers=HEADERS, timeout=15)
         if r.status_code != 200:
             return []
         dados = r.json()
@@ -36,17 +31,17 @@ def obter_pares_futuros():
             and s.get("contractType") == "PERPETUAL"
             and s.get("status") == "TRADING"
         ]
-        print(f"-> Total de pares encontrados: {len(pares)}")
+        print(f"-> Total de pares encontrados: {len(pares)}", flush=True)
         return sorted(pares)
-    except Exception:
+    except Exception as e:
+        print(f"[Aviso] Falha ao obter pares: {e}", flush=True)
         return []
-
 
 def obter_historico(par):
     url = f"{BASE_URL}/fapi/v1/klines"
-    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
+    params = {"symbol": par, "interval": "1d", "limit": PERIODO_MEDIA + 5}
     try:
-        r = session.get(url, params=params, timeout=10)
+        r = requests.get(url, params=params, headers=HEADERS, timeout=8)
         if r.status_code != 200:
             return None
         klines = r.json()
@@ -56,19 +51,13 @@ def obter_historico(par):
     except Exception:
         return None
 
-
 def processar_e_salvar():
     pares = obter_pares_futuros()
     if not pares:
-        print("[Erro] Nenhum par encontrado.")
+        print("[Erro] Nenhum par disponível para processamento.", flush=True)
         return
 
-    print(f"-> A processar {len(pares)} ativos de forma acelerada...")
-    lista_resultado = []
-    data_recente_label = ""
-
-    # Determina a data de fechamento com base no último candle encerrado às 21h BRT
-    # Se hoje é 22/10, o último fechamento de 21h foi ontem, dia 21/10
+    # Determina a data civil do fechamento encerrado às 21h em Brasília
     agora_brt = datetime.now(FUSO_BRT)
     if agora_brt.hour < 21:
         data_fechamento_oficial = (agora_brt - timedelta(days=1)).strftime("%d/%m/%Y")
@@ -76,17 +65,21 @@ def processar_e_salvar():
         data_fechamento_oficial = agora_brt.strftime("%d/%m/%Y")
 
     data_recente_label = data_fechamento_oficial
+    print(f"-> Data de referência do candle fechado: {data_recente_label}", flush=True)
+    print(f"-> A processar {len(pares)} ativos...", flush=True)
+
+    lista_resultado = []
 
     for i, par in enumerate(pares, 1):
-        if i % 25 == 0 or i == len(pares):
-            print(f"-> Processados {i}/{len(pares)} ativos...", flush=True)
+        if i % 30 == 0 or i == len(pares):
+            print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         klines = obter_historico(par)
         if not klines:
             continue
 
-        # klines[-1] é o candle aberto de hoje em andamento
-        # klines[-2] é rigorosamente o candle que fechou ontem às 21h
+        # klines[-1] = candle aberto de hoje
+        # klines[-2] = último candle fechado às 21h BRT
         ultimo_fechado = klines[-2]
         anteriores = klines[-(PERIODO_MEDIA + 2):-2]
 
@@ -122,17 +115,18 @@ def processar_e_salvar():
             "cv": round(cv_p, 2)
         })
 
+        time.sleep(0.04)
+
     dados_finais = {
         "data_fechamento": data_recente_label,
         "ativos": lista_resultado
     }
 
-    caminho_arquivo = os.path.join(os.path.dirname(__file__), "dados.json")
+    caminho_arquivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado para a data {data_recente_label} com {len(lista_resultado)} ativos em tempo recorde!")
-
+    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos salvos!", flush=True)
 
 if __name__ == "__main__":
     processar_e_salvar()
