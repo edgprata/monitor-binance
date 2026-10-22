@@ -15,7 +15,7 @@ PERIODO_MEDIA = 20
 # Fuso horário oficial de Brasília (UTC-3)
 FUSO_BRT = timezone(timedelta(hours=-3))
 
-# Cabeçalho simulando navegador moderno para evitar bloqueios de rede no GitHub Actions
+# Cabeçalho simulando navegador real para evitar bloqueios de rede no GitHub Actions
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "application/json"
@@ -25,7 +25,7 @@ HEADERS = {
 def obter_pares_futuros():
     """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> A consultar contratos futuros perpétuos...")
+    print("-> Consultando contratos futuros perpétuos na Binance...")
 
     for tentativa in range(1, 4):
         try:
@@ -58,7 +58,7 @@ def obter_pares_futuros():
 
 def obter_historico(par):
     """
-    Obtém candles diários fechados convertendo o horário de encerramento para o fuso de Brasília.
+    Obtém a lista ordenada de candles diários estritamente já fechados.
     """
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 5}
@@ -66,39 +66,33 @@ def obter_historico(par):
     try:
         r = requests.get(url, params=params, headers=HEADERS, timeout=10)
         if r.status_code != 200:
-            return {}, {}
+            return []
 
         klines = r.json()
-        if not isinstance(klines, list):
-            return {}, {}
+        if not isinstance(klines, list) or len(klines) < PERIODO_MEDIA + 2:
+            return []
 
         agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
 
-        fechamentos = {}
-        volumes = {}
-
+        # Filtra estritamente os candles cujo encerramento (k[6]) já ocorreu
+        candles_fechados = []
         for k in klines:
             if len(k) < 8:
                 continue
-
             tempo_fechamento_ms = k[6]
+            if tempo_fechamento_ms <= agora_ms:
+                # Converte o timestamp de fechamento para a data em Brasília
+                dt_fechamento = datetime.fromtimestamp(tempo_fechamento_ms / 1000, tz=FUSO_BRT)
+                candles_fechados.append({
+                    "data_formatada": dt_fechamento.strftime("%d/%m/%Y"),
+                    "preco": float(k[4]),
+                    "volume": float(k[7])
+                })
 
-            # Descarta o candle aberto que ainda está em andamento
-            if tempo_fechamento_ms > agora_ms:
-                continue
-
-            # Converte o timestamp de fechamento para o Horário de Brasília (UTC-3)
-            data_fechamento_dt = datetime.fromtimestamp(tempo_fechamento_ms / 1000, tz=FUSO_BRT)
-            data_str = data_fechamento_dt.strftime("%d/%m/%Y")
-            data_iso = data_fechamento_dt.strftime("%Y-%m-%d")
-
-            fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
-            volumes[data_iso] = float(k[7])
-
-        return fechamentos, volumes
+        return candles_fechados
 
     except Exception:
-        return {}, {}
+        return []
 
 
 def processar_e_salvar():
@@ -108,27 +102,28 @@ def processar_e_salvar():
         print("[Erro] Nenhum par encontrado.")
         return
 
-    print(f"-> A processar {len(pares)} ativos...")
+    print(f"-> Processando {len(pares)} ativos...")
     lista_resultado = []
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
         print(f"[{i}/{len(pares)}] {par}...", end="\r")
-        p, v = obter_historico(par)
+        serie = obter_historico(par)
 
-        if len(p) < PERIODO_MEDIA + 1:
+        # Precisamos de no mínimo 20 períodos anteriores + 1 candle recente
+        if len(serie) < PERIODO_MEDIA + 1:
             continue
 
-        datas_ordenadas = sorted(p.keys())
-        ultima_data = datas_ordenadas[-1]
-        datas_anteriores = datas_ordenadas[-(PERIODO_MEDIA + 1):-1]
+        # O último item da lista é rigorosamente o último candle fechado às 21h BRT
+        ultimo_candle = serie[-1]
+        candles_anteriores = serie[-(PERIODO_MEDIA + 1):-1]
 
-        data_recente_label = p[ultima_data]["formatada"]
-        ultimo_preco = p[ultima_data]["valor"]
-        ultimo_vol = v[ultima_data]
+        data_recente_label = ultimo_candle["data_formatada"]
+        ultimo_preco = ultimo_candle["preco"]
+        ultimo_vol = ultimo_candle["volume"]
 
-        precos_anteriores = [p[d]["valor"] for d in datas_anteriores]
-        volumes_anteriores = [v[d] for d in datas_anteriores]
+        precos_anteriores = [c["preco"] for c in candles_anteriores]
+        volumes_anteriores = [c["volume"] for c in candles_anteriores]
 
         serie_p = pd.Series(precos_anteriores)
         serie_v = pd.Series(volumes_anteriores)
@@ -155,7 +150,7 @@ def processar_e_salvar():
         time.sleep(0.03)
 
     dados_finais = {
-        "data_fechamento": data_recente_label or datetime.now(FUSO_BRT).strftime("%d/%m/%Y"),
+        "data_fechamento": data_recente_label,
         "ativos": lista_resultado
     }
 
@@ -163,7 +158,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado com data {data_recente_label} e {len(lista_resultado)} ativos!")
+    print(f"\n[SUCESSO] dados.json gerado com data {data_recente_label} e {len(lista_resultado)} ativos salvos!")
 
 
 if __name__ == "__main__":
