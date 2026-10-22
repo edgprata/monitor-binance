@@ -14,14 +14,19 @@ HEADERS = {
     "Accept": "application/json"
 }
 
+# Sessão persistente para alta velocidade e estabilidade de conexão
+session = requests.Session()
+session.headers.update(HEADERS)
+
 
 def obter_pares_futuros():
+    """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
     print("-> A consultar pares perpétuos na Binance...", flush=True)
     try:
-        r = requests.get(url, headers=HEADERS, timeout=15)
+        r = session.get(url, timeout=15)
         if r.status_code != 200:
-            print(f"[Erro] Status code: {r.status_code}", flush=True)
+            print(f"[Erro] Status retornado: {r.status_code}", flush=True)
             return []
         dados = r.json()
         pares = [
@@ -39,10 +44,11 @@ def obter_pares_futuros():
 
 
 def obter_historico(par):
+    """Obtém candles diários fechados utilizando a lógica do script local."""
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
     try:
-        r = requests.get(url, params=params, headers=HEADERS, timeout=10)
+        r = session.get(url, params=params, timeout=10)
         if r.status_code != 200:
             return {}, {}
 
@@ -60,7 +66,7 @@ def obter_historico(par):
             if close_time > agora_ms:
                 continue
 
-            # Data oficial UTC correspondente ao fechamento
+            # Data oficial UTC de abertura do candle fechado
             dt_utc = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc)
             data_str = dt_utc.strftime("%d/%m/%Y")
             data_iso = dt_utc.strftime("%Y-%m-%d")
@@ -76,15 +82,15 @@ def obter_historico(par):
 def processar_e_salvar():
     pares = obter_pares_futuros()
     if not pares:
-        print("[Erro Crítico] Lista de pares vazia. Encerrando.", flush=True)
+        print("[Erro Crítico] Lista de pares vazia. Encerrando execução.", flush=True)
         return
 
-    print(f"-> Processando {len(pares)} ativos...", flush=True)
+    print(f"-> A processar {len(pares)} ativos...", flush=True)
     lista_resultado = []
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
-        if i % 25 == 0 or i == len(pares):
+        if i % 30 == 0 or i == len(pares):
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         p, v = obter_historico(par)
@@ -125,18 +131,18 @@ def processar_e_salvar():
             "cv": round(cv_p, 2)
         })
 
-        time.sleep(0.04)
+        time.sleep(0.03)
 
     dados_finais = {
         "data_fechamento": data_recente_label,
         "ativos": lista_resultado
     }
 
-    # Salva diretamente no arquivo dados.json na pasta do repositório
-    with open("dados.json", "w", encoding="utf-8") as f:
+    caminho_arquivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
+    with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos!", flush=True)
+    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos salvos!", flush=True)
 
 
 if __name__ == "__main__":
