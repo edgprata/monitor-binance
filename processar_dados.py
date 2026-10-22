@@ -1,11 +1,19 @@
 import os
+import sys
 import json
 import time
 from datetime import datetime, timezone
 import requests
 import pandas as pd
 
-BASE_URL = "https://fapi.binance.com"
+# Servidores oficiais da Binance para dados públicos de futuros perpétuos
+ENDPOINTS_FUTUROS = [
+    "https://fapi.binance.com",
+    "https://data-api.binance.vision",
+    "https://fapi1.binance.com",
+    "https://fapi2.binance.com"
+]
+
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
 
@@ -18,34 +26,39 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
-def obter_pares_futuros():
-    url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> Consultando contratos futuros perpétuos na Binance...", flush=True)
-    try:
-        r = session.get(url, timeout=15)
-        if r.status_code != 200:
-            print(f"[Erro] Status retornado: {r.status_code}", flush=True)
-            return []
-        dados = r.json()
-        pares = [
-            s["symbol"]
-            for s in dados.get("symbols", [])
-            if s.get("quoteAsset") == "USDT"
-            and s.get("contractType") == "PERPETUAL"
-            and s.get("status") == "TRADING"
-        ]
-        print(f"-> Total de pares encontrados: {len(pares)}", flush=True)
-        return sorted(pares)
-    except Exception as e:
-        print(f"[Erro] Falha ao listar pares: {e}", flush=True)
-        return []
+def obter_pares_e_endpoint():
+    """Descobre qual servidor da Binance está acessível e obtém os contratos perpétuos."""
+    print("-> Verificando conectividade com os servidores da Binance...", flush=True)
+    for url_base in ENDPOINTS_FUTUROS:
+        url = f"{url_base}/fapi/v1/exchangeInfo"
+        print(f"   Testando endpoint: {url_base}...", flush=True)
+        try:
+            r = session.get(url, timeout=12)
+            print(f"   Resposta HTTP: {r.status_code}", flush=True)
+            if r.status_code == 200:
+                dados = r.json()
+                pares = [
+                    s["symbol"]
+                    for s in dados.get("symbols", [])
+                    if s.get("quoteAsset") == "USDT"
+                    and s.get("contractType") == "PERPETUAL"
+                    and s.get("status") == "TRADING"
+                ]
+                if pares:
+                    print(f"-> Conectado com sucesso via {url_base}! Total de {len(pares)} moedas encontradas.", flush=True)
+                    return url_base, sorted(pares)
+        except Exception as e:
+            print(f"   Falha ao conectar em {url_base}: {e}", flush=True)
+
+    return None, []
 
 
-def obter_historico(par):
-    url = f"{BASE_URL}/fapi/v1/klines"
+def obter_historico(url_base, par):
+    """Coleta os candles diários fechados utilizando a lógica do script local."""
+    url = f"{url_base}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
     try:
-        r = session.get(url, params=params, timeout=10)
+        r = session.get(url, params=params, timeout=8)
         if r.status_code != 200:
             return {}, {}
 
@@ -61,7 +74,7 @@ def obter_historico(par):
             if len(k) < 8:
                 continue
             close_time = k[6]
-            # Descarta a vela aberta de hoje em andamento
+            # Descarta o candle aberto de hoje
             if close_time > agora_ms:
                 continue
 
@@ -78,9 +91,10 @@ def obter_historico(par):
 
 
 def processar_e_salvar():
-    pares = obter_pares_futuros()
+    url_base, pares = obter_pares_e_endpoint()
     if not pares:
-        raise RuntimeError("Lista de pares vazia. Verifique a conexão com a Binance.")
+        print("[ERRO FATAL] Nenhum servidor de futuros da Binance pôde ser acessado a partir desta rede.", flush=True)
+        sys.exit(1)
 
     print(f"-> A processar {len(pares)} ativos...", flush=True)
     lista_resultado = []
@@ -91,7 +105,7 @@ def processar_e_salvar():
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         try:
-            p, v = obter_historico(par)
+            p, v = obter_historico(url_base, par)
             if len(p) < PERIODO_MEDIA + 1:
                 continue
 
@@ -131,15 +145,15 @@ def processar_e_salvar():
         except Exception:
             continue
 
-        time.sleep(0.03)
+        time.sleep(0.02)
 
     dados_finais = {
         "data_fechamento": data_recente_label,
         "ativos": lista_resultado
     }
 
-    # Grava o arquivo dados.json na pasta atual
-    with open("dados.json", "w", encoding="utf-8") as f:
+    caminho_arquivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
+    with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
     print(f"\n[SUCESSO] dados.json gravado com sucesso para a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
