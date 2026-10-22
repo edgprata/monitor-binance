@@ -6,6 +6,7 @@ import requests
 import pandas as pd
 
 BASE_URL = "https://fapi.binance.com"
+HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
 
 HEADERS = {
@@ -16,9 +17,10 @@ HEADERS = {
 session = requests.Session()
 session.headers.update(HEADERS)
 
+
 def obter_pares_futuros():
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
-    print("-> A consultar lista de contratos futuros...", flush=True)
+    print("-> A consultar contratos futuros perpétuos na Binance...", flush=True)
     try:
         r = session.get(url, timeout=15)
         if r.status_code != 200:
@@ -33,23 +35,42 @@ def obter_pares_futuros():
         ]
         print(f"-> Total de pares encontrados: {len(pares)}", flush=True)
         return sorted(pares)
-    except Exception as e:
-        print(f"[Aviso] Falha ao obter pares: {e}", flush=True)
+    except Exception:
         return []
+
 
 def obter_historico(par):
     url = f"{BASE_URL}/fapi/v1/klines"
-    params = {"symbol": par, "interval": "1d", "limit": PERIODO_MEDIA + 5}
+    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
     try:
         r = session.get(url, params=params, timeout=8)
         if r.status_code != 200:
-            return None
+            return {}, {}
+
         klines = r.json()
-        if not isinstance(klines, list) or len(klines) < PERIODO_MEDIA + 2:
-            return None
-        return klines
+        if not isinstance(klines, list):
+            return {}, {}
+
+        agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+        fechamentos = {}
+        volumes = {}
+
+        for k in klines:
+            close_time = k[6]
+            if close_time > agora_ms:
+                continue
+
+            dt_utc = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc)
+            data_str = dt_utc.strftime("%d/%m/%Y")
+            data_iso = dt_utc.strftime("%Y-%m-%d")
+
+            fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
+            volumes[data_iso] = float(k[7])
+
+        return fechamentos, volumes
     except Exception:
-        return None
+        return {}, {}
+
 
 def processar_e_salvar():
     pares = obter_pares_futuros()
@@ -57,36 +78,31 @@ def processar_e_salvar():
         print("[Erro] Nenhum par encontrado.", flush=True)
         return
 
-    lista_resultado = []
-    # Data civil da vela fechada ontem às 21h em Brasília
-    data_recente_label = "21/10/2026"
-
     print(f"-> A processar {len(pares)} ativos...", flush=True)
+    lista_resultado = []
+    data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
-        if i % 35 == 0 or i == len(pares):
+        if i % 30 == 0 or i == len(pares):
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
-        klines = obter_historico(par)
-        if not klines:
+        p, v = obter_historico(par)
+        if len(p) < PERIODO_MEDIA + 1:
             continue
 
-        # klines[-1] = vela aberta hoje
-        # klines[-2] = vela fechada ontem às 21h
-        ultimo_fechado = klines[-2]
-        anteriores = klines[-(PERIODO_MEDIA + 2):-2]
+        datas_ordenadas = sorted(p.keys())
+        ultima_data = datas_ordenadas[-1]
+        datas_anteriores = datas_ordenadas[-(PERIODO_MEDIA + 1):-1]
 
-        if len(anteriores) < PERIODO_MEDIA:
-            continue
+        data_recente_label = p[ultima_data]["formatada"]
+        ultimo_preco = p[ultima_data]["valor"]
+        ultimo_vol = v[ultima_data]
 
-        ultimo_preco = float(ultimo_fechado[4])
-        ultimo_vol = float(ultimo_fechado[7])
+        precos_anteriores = [p[d]["valor"] for d in datas_anteriores]
+        volumes_anteriores = [v[d] for d in datas_anteriores]
 
-        precos_ant = [float(k[4]) for k in anteriores]
-        vols_ant = [float(k[7]) for k in anteriores]
-
-        serie_p = pd.Series(precos_ant)
-        serie_v = pd.Series(vols_ant)
+        serie_p = pd.Series(precos_anteriores)
+        serie_v = pd.Series(volumes_anteriores)
 
         media_p = serie_p.mean()
         desvio_p = serie_p.std()
@@ -120,6 +136,7 @@ def processar_e_salvar():
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
     print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos processados!", flush=True)
+
 
 if __name__ == "__main__":
     processar_e_salvar()
