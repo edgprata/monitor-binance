@@ -4,9 +4,6 @@ on:
   schedule:
     # 00:02 UTC equivale às 21:02 no horário de Brasília (UTC-3)
     - cron: '2 0 * * *'
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -30,9 +27,11 @@ jobs:
       - name: Executar script de coleta da Binance
         run: python processar_dados.py
 
-      - name: Salvar o dados.json atualizado no repositório
+      - name: Confirmar e Enviar dados.json
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add dados.json
-          git diff --staged --quiet || (git commit -m "Atualizacao automatica do dados.json" && git push origin main)
+          git status
+          git commit -m "Atualizacao automatica dados.json" || echo "Sem mudancas"
+          git push origin main
