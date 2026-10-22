@@ -14,19 +14,17 @@ HEADERS = {
     "Accept": "application/json"
 }
 
-# Sessão persistente para alta velocidade e estabilidade de conexão
 session = requests.Session()
 session.headers.update(HEADERS)
 
 
 def obter_pares_futuros():
-    """Consulta a lista de contratos futuros perpétuos em USDT ativos."""
     url = f"{BASE_URL}/fapi/v1/exchangeInfo"
     print("-> A consultar pares perpétuos na Binance...", flush=True)
     try:
         r = session.get(url, timeout=15)
         if r.status_code != 200:
-            print(f"[Erro] Status retornado: {r.status_code}", flush=True)
+            print(f"[Erro] Status code: {r.status_code}", flush=True)
             return []
         dados = r.json()
         pares = [
@@ -39,12 +37,11 @@ def obter_pares_futuros():
         print(f"-> Total de pares encontrados: {len(pares)}", flush=True)
         return sorted(pares)
     except Exception as e:
-        print(f"[Erro] Falha ao listar pares: {e}", flush=True)
+        print(f"[Erro] Falha ao obter lista: {e}", flush=True)
         return []
 
 
 def obter_historico(par):
-    """Obtém candles diários fechados utilizando a lógica do script local."""
     url = f"{BASE_URL}/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
     try:
@@ -82,7 +79,7 @@ def obter_historico(par):
 def processar_e_salvar():
     pares = obter_pares_futuros()
     if not pares:
-        print("[Erro Crítico] Lista de pares vazia. Encerrando execução.", flush=True)
+        print("[Erro Crítico] Nenhum par encontrado.", flush=True)
         return
 
     print(f"-> A processar {len(pares)} ativos...", flush=True)
@@ -142,7 +139,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos salvos!", flush=True)
+    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} ativos!", flush=True)
 
 
 if __name__ == "__main__":
