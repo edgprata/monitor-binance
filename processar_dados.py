@@ -6,10 +6,12 @@ from datetime import datetime, timezone
 import requests
 import pandas as pd
 
-ROTAS_BASE = [
-    "https://data.binance.com",
-    "https://api.binance.com",
-    "https://fapi.binance.com"
+# Servidores exclusivos do mercado de Futuros Perpétuos da Binance
+ENDPOINTS_FUTUROS = [
+    "https://fapi.binance.com",
+    "https://fapi-mm.binance.com",
+    "https://fapi1.binance.com",
+    "https://fapi2.binance.com"
 ]
 
 HISTORICO_DIAS = 35
@@ -24,66 +26,84 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
-def obter_pares_e_rota():
-    print("-> Verificando conectividade com endpoints publicos da Binance...", flush=True)
+def obter_pares_futuros():
+    """Consulta exclusivamente contratos futuros perpétuos em USDT."""
+    print("-> Consultando contratos futuros perpétuos na Binance...", flush=True)
 
-    endpoints_teste = [
-        ("https://data.binance.com", "/fapi/v1/exchangeInfo"),
-        ("https://fapi.binance.com", "/fapi/v1/exchangeInfo"),
-        ("https://data-api.binance.vision", "/api/v3/exchangeInfo")
-    ]
-
-    for base, path in endpoints_teste:
-        url = f"{base}{path}"
-        print(f"   Testando: {url}...", flush=True)
+    # 1. Tentativa direta nos servidores de futuros
+    for base_url in ENDPOINTS_FUTUROS:
+        url = f"{base_url}/fapi/v1/exchangeInfo"
+        print(f"   Testando endpoint de futuros: {base_url}...", flush=True)
         try:
             r = session.get(url, timeout=12)
-            print(f"   Resposta HTTP: {r.status_code}", flush=True)
             if r.status_code == 200:
                 dados = r.json()
-                simbolos = dados.get("symbols", [])
                 pares = [
                     s["symbol"]
-                    for s in simbolos
+                    for s in dados.get("symbols", [])
                     if s.get("quoteAsset") == "USDT"
-                    and (s.get("contractType") == "PERPETUAL" or s.get("status") == "TRADING")
+                    and s.get("contractType") == "PERPETUAL"
+                    and s.get("status") == "TRADING"
                 ]
                 if pares:
-                    pares_futuros = [p for p in pares if not p.endswith("UPUSDT") and not p.endswith("DOWNUSDT")]
-                    print(f"-> Sucesso via {base}! Total de {len(pares_futuros)} pares encontrados.", flush=True)
-                    return base, path.split("/")[1], sorted(pares_futuros)
-        except Exception as e:
-            print(f"   Falha ao consultar {base}: {e}", flush=True)
+                    print(f"-> Sucesso via {base_url}! Encontrados {len(pares)} contratos futuros perpétuos.", flush=True)
+                    return base_url, sorted(pares)
+        except Exception:
+            continue
 
-    print("-> Tentando rota espelho publica de dados...", flush=True)
-    try:
-        url_gw = "https://api.binance.com/api/v3/exchangeInfo"
-        r = session.get(url_gw, timeout=15)
-        if r.status_code == 200:
-            dados = r.json()
-            pares = [
-                s["symbol"]
-                for s in dados.get("symbols", [])
-                if s.get("quoteAsset") == "USDT" and s.get("status") == "TRADING"
-            ]
-            print(f"-> Conectado via rota publica! Total de {len(pares)} pares.", flush=True)
-            return "https://api.binance.com", "api", sorted(pares)
-    except Exception as e:
-        print(f"   Falha na rota alternativa: {e}", flush=True)
+    # 2. Proxy de túnel para futuros caso os datacenters dos EUA recebam erro 451
+    print("-> Utilizando rota de túnel para acessar futuros sem bloqueio regional...", flush=True)
+    gateways = [
+        "https://api.codetabs.com/v1/proxy?quest=",
+        "https://api.allorigins.win/raw?url="
+    ]
 
-    return None, None, []
+    for gw in gateways:
+        try:
+            url_alvo = "https://fapi.binance.com/fapi/v1/exchangeInfo"
+            url_tunel = f"{gw}{requests.utils.quote(url_alvo)}"
+            r = session.get(url_tunel, timeout=20)
+            if r.status_code == 200:
+                dados = r.json()
+                if isinstance(dados, str):
+                    dados = json.loads(dados)
+                pares = [
+                    s["symbol"]
+                    for s in dados.get("symbols", [])
+                    if s.get("quoteAsset") == "USDT"
+                    and s.get("contractType") == "PERPETUAL"
+                    and s.get("status") == "TRADING"
+                ]
+                if pares:
+                    print(f"-> Sucesso via túnel! Encontrados {len(pares)} contratos futuros perpétuos.", flush=True)
+                    return f"TUNEL|{gw}", sorted(pares)
+        except Exception:
+            continue
+
+    return None, []
 
 
-def obter_historico(base_url, prefixo, par):
-    url = f"{base_url}/{prefixo}/v1/klines" if prefixo == "fapi" else f"{base_url}/{prefixo}/v3/klines"
+def obter_historico(origem, par):
+    """Coleta velas diárias fechadas de contratos futuros perpétuos."""
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
 
     try:
-        r = session.get(url, params=params, timeout=8)
+        if origem.startswith("TUNEL|"):
+            gw = origem.split("|")[1]
+            url_alvo = f"https://fapi.binance.com/fapi/v1/klines?symbol={par}&interval=1d&limit={HISTORICO_DIAS + 2}"
+            url = f"{gw}{requests.utils.quote(url_alvo)}"
+            r = session.get(url, timeout=10)
+        else:
+            url = f"{origem}/fapi/v1/klines"
+            r = session.get(url, params=params, timeout=10)
+
         if r.status_code != 200:
             return {}, {}
 
         klines = r.json()
+        if isinstance(klines, str):
+            klines = json.loads(klines)
+
         if not isinstance(klines, list):
             return {}, {}
 
@@ -95,9 +115,11 @@ def obter_historico(base_url, prefixo, par):
             if len(k) < 8:
                 continue
             close_time = k[6]
+            # Descarta o candle aberto de hoje
             if close_time > agora_ms:
                 continue
 
+            # Data UTC correspondente ao fechamento
             dt_utc = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc)
             data_str = dt_utc.strftime("%d/%m/%Y")
             data_iso = dt_utc.strftime("%Y-%m-%d")
@@ -111,21 +133,21 @@ def obter_historico(base_url, prefixo, par):
 
 
 def processar_e_salvar():
-    base_url, prefixo, pares = obter_pares_e_rota()
+    origem, pares = obter_pares_futuros()
     if not pares:
-        print("[ERRO FATAL] Nao foi possivel obter os dados da Binance nesta execucao.", flush=True)
+        print("[ERRO FATAL] Não foi possível consultar a API de futuros.", flush=True)
         sys.exit(1)
 
-    print(f"-> A processar {len(pares)} ativos...", flush=True)
+    print(f"-> Processando {len(pares)} contratos futuros perpétuos...", flush=True)
     lista_resultado = []
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
         if i % 30 == 0 or i == len(pares):
-            print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
+            print(f"-> Analisando [{i}/{len(pares)}] futuros perpétuos...", flush=True)
 
         try:
-            p, v = obter_historico(base_url, prefixo, par)
+            p, v = obter_historico(origem, par)
             if len(p) < PERIODO_MEDIA + 1:
                 continue
 
@@ -176,7 +198,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gravado com sucesso para a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
+    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} contratos futuros perpétuos!", flush=True)
 
 
 if __name__ == "__main__":
