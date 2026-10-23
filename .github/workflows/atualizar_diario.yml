@@ -2,7 +2,7 @@ name: Atualizar Dashboard Binance Diario
 
 on:
   schedule:
-    # 00:05 UTC equivale exatamente às 21:05 no horário de Brasília (UTC-3)
+    # 00:05 UTC equivale às 21:05 no horário de Brasília (UTC-3)
     - cron: '5 0 * * *'
   push:
     branches:
