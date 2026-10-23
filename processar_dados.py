@@ -6,12 +6,10 @@ from datetime import datetime, timezone
 import requests
 import pandas as pd
 
-# Lista de servidores da Binance com cabeçalho de contorno regional
-SERVIDORES = [
-    "https://fapi.binance.com",
-    "https://fapi1.binance.com",
-    "https://fapi2.binance.com",
-    "https://fapi3.binance.com"
+ROTAS_BASE = [
+    "https://data.binance.com",
+    "https://api.binance.com",
+    "https://fapi.binance.com"
 ]
 
 HISTORICO_DIAS = 35
@@ -19,77 +17,70 @@ PERIODO_MEDIA = 20
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept": "application/json",
-    "X-Forwarded-For": "177.18.200.50"
+    "Accept": "application/json"
 }
 
 session = requests.Session()
 session.headers.update(HEADERS)
 
 
-def obter_pares_e_endpoint():
-    """Descobre o servidor acessível e obtém os contratos perpétuos em USDT."""
-    print("-> Verificando conectividade com os servidores da Binance...", flush=True)
+def obter_pares_e_rota():
+    print("-> Verificando conectividade com endpoints publicos da Binance...", flush=True)
 
-    for base_url in SERVIDORES:
-        url = f"{base_url}/fapi/v1/exchangeInfo"
-        print(f"   Testando endpoint: {base_url}...", flush=True)
+    endpoints_teste = [
+        ("https://data.binance.com", "/fapi/v1/exchangeInfo"),
+        ("https://fapi.binance.com", "/fapi/v1/exchangeInfo"),
+        ("https://data-api.binance.vision", "/api/v3/exchangeInfo")
+    ]
+
+    for base, path in endpoints_teste:
+        url = f"{base}{path}"
+        print(f"   Testando: {url}...", flush=True)
         try:
             r = session.get(url, timeout=12)
             print(f"   Resposta HTTP: {r.status_code}", flush=True)
-            if r.status_code in [200, 202]:
+            if r.status_code == 200:
                 dados = r.json()
+                simbolos = dados.get("symbols", [])
                 pares = [
                     s["symbol"]
-                    for s in dados.get("symbols", [])
+                    for s in simbolos
                     if s.get("quoteAsset") == "USDT"
-                    and s.get("contractType") == "PERPETUAL"
-                    and s.get("status") == "TRADING"
+                    and (s.get("contractType") == "PERPETUAL" or s.get("status") == "TRADING")
                 ]
                 if pares:
-                    print(f"-> Sucesso via {base_url}! Encontrados {len(pares)} pares.", flush=True)
-                    return base_url, sorted(pares)
+                    pares_futuros = [p for p in pares if not p.endswith("UPUSDT") and not p.endswith("DOWNUSDT")]
+                    print(f"-> Sucesso via {base}! Total de {len(pares_futuros)} pares encontrados.", flush=True)
+                    return base, path.split("/")[1], sorted(pares_futuros)
         except Exception as e:
-            print(f"   Falha ao conectar em {base_url}: {e}", flush=True)
+            print(f"   Falha ao consultar {base}: {e}", flush=True)
 
-    # Tentativa via Proxy Aberto caso os endpoints diretos sofram bloqueio 451
-    print("-> Tentando via Gateway de Contorno...", flush=True)
+    print("-> Tentando rota espelho publica de dados...", flush=True)
     try:
-        url_proxy = "https://api.allorigins.win/raw?url=" + requests.utils.quote("https://fapi.binance.com/fapi/v1/exchangeInfo")
-        r = session.get(url_proxy, timeout=20)
-        if r.status_code in [200, 202]:
+        url_gw = "https://api.binance.com/api/v3/exchangeInfo"
+        r = session.get(url_gw, timeout=15)
+        if r.status_code == 200:
             dados = r.json()
             pares = [
                 s["symbol"]
                 for s in dados.get("symbols", [])
-                if s.get("quoteAsset") == "USDT"
-                and s.get("contractType") == "PERPETUAL"
-                and s.get("status") == "TRADING"
+                if s.get("quoteAsset") == "USDT" and s.get("status") == "TRADING"
             ]
-            if pares:
-                print(f"-> Sucesso via Gateway! Encontrados {len(pares)} pares.", flush=True)
-                return "PROXY", sorted(pares)
+            print(f"-> Conectado via rota publica! Total de {len(pares)} pares.", flush=True)
+            return "https://api.binance.com", "api", sorted(pares)
     except Exception as e:
-        print(f"   Falha no gateway: {e}", flush=True)
+        print(f"   Falha na rota alternativa: {e}", flush=True)
 
-    return None, []
+    return None, None, []
 
 
-def obter_historico(base_url, par):
-    """
-    Obtém as velas fechadas utilizando a mesma lógica UTC do script local funcional.
-    """
-    if base_url == "PROXY":
-        url_direta = f"https://fapi.binance.com/fapi/v1/klines?symbol={par}&interval=1d&limit={HISTORICO_DIAS + 2}"
-        url = "https://api.allorigins.win/raw?url=" + requests.utils.quote(url_direta)
-    else:
-        url = f"{base_url}/fapi/v1/klines"
-
-    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2} if base_url != "PROXY" else None
+def obter_historico(base_url, prefixo, par):
+    url = f"{base_url}/{prefixo}/v1/klines" if prefixo == "fapi" else f"{base_url}/{prefixo}/v3/klines"
+    params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
 
     try:
-        r = session.get(url, params=params, timeout=10)
-        if r.status_code not in [200, 202]:
+        r = session.get(url, params=params, timeout=8)
+        if r.status_code != 200:
             return {}, {}
 
         klines = r.json()
@@ -104,7 +95,6 @@ def obter_historico(base_url, par):
             if len(k) < 8:
                 continue
             close_time = k[6]
-            # Descarta a vela aberta em andamento
             if close_time > agora_ms:
                 continue
 
@@ -121,9 +111,9 @@ def obter_historico(base_url, par):
 
 
 def processar_e_salvar():
-    base_url_ativo, pares = obter_pares_e_endpoint()
+    base_url, prefixo, pares = obter_pares_e_rota()
     if not pares:
-        print("[ERRO FATAL] Impossível conectar à Binance nesta execução.", flush=True)
+        print("[ERRO FATAL] Nao foi possivel obter os dados da Binance nesta execucao.", flush=True)
         sys.exit(1)
 
     print(f"-> A processar {len(pares)} ativos...", flush=True)
@@ -135,7 +125,7 @@ def processar_e_salvar():
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         try:
-            p, v = obter_historico(base_url_ativo, par)
+            p, v = obter_historico(base_url, prefixo, par)
             if len(p) < PERIODO_MEDIA + 1:
                 continue
 
@@ -186,7 +176,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gravado para a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
+    print(f"\n[SUCESSO] dados.json gravado com sucesso para a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
 
 
 if __name__ == "__main__":
