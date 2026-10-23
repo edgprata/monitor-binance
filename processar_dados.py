@@ -3,16 +3,9 @@ import sys
 import json
 import time
 from datetime import datetime, timezone
+import urllib.parse
 import requests
 import pandas as pd
-
-# Servidores exclusivos do mercado de Futuros Perpétuos da Binance
-ENDPOINTS_FUTUROS = [
-    "https://fapi.binance.com",
-    "https://fapi-mm.binance.com",
-    "https://fapi1.binance.com",
-    "https://fapi2.binance.com"
-]
 
 HISTORICO_DIAS = 35
 PERIODO_MEDIA = 20
@@ -26,116 +19,102 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
-def obter_pares_futuros():
-    """Consulta exclusivamente contratos futuros perpétuos em USDT."""
-    print("-> Consultando contratos futuros perpétuos na Binance...", flush=True)
+def requisicao_segura(url_alvo, params=None, timeout=12):
+    """
+    Executa a requisição diretamente. Se sofrer bloqueio regional (451/403/202),
+    repassa automaticamente por túneis de conexão externos à região dos EUA.
+    """
+    url_completa = url_alvo
+    if params:
+        query_string = urllib.parse.urlencode(params)
+        url_completa = f"{url_alvo}?{query_string}"
 
-    # 1. Tentativa direta nos servidores de futuros
-    for base_url in ENDPOINTS_FUTUROS:
-        url = f"{base_url}/fapi/v1/exchangeInfo"
-        print(f"   Testando endpoint de futuros: {base_url}...", flush=True)
-        try:
-            r = session.get(url, timeout=12)
-            if r.status_code == 200:
-                dados = r.json()
-                pares = [
-                    s["symbol"]
-                    for s in dados.get("symbols", [])
-                    if s.get("quoteAsset") == "USDT"
-                    and s.get("contractType") == "PERPETUAL"
-                    and s.get("status") == "TRADING"
-                ]
-                if pares:
-                    print(f"-> Sucesso via {base_url}! Encontrados {len(pares)} contratos futuros perpétuos.", flush=True)
-                    return base_url, sorted(pares)
-        except Exception:
-            continue
+    # 1. Tentativa direta
+    try:
+        r = session.get(url_completa, timeout=timeout)
+        if r.status_code == 200:
+            dados = r.json()
+            if isinstance(dados, (dict, list)):
+                return dados
+    except Exception:
+        pass
 
-    # 2. Proxy de túnel para futuros caso os datacenters dos EUA recebam erro 451
-    print("-> Utilizando rota de túnel para acessar futuros sem bloqueio regional...", flush=True)
+    # 2. Túneis de rotação externa para contorno do bloqueio dos EUA
     gateways = [
-        "https://api.codetabs.com/v1/proxy?quest=",
-        "https://api.allorigins.win/raw?url="
+        lambda u: f"https://corsproxy.io/?{urllib.parse.quote(u, safe='')}",
+        lambda u: f"https://api.allorigins.win/raw?url={urllib.parse.quote(u, safe='')}"
     ]
 
-    for gw in gateways:
+    for formatar_url in gateways:
         try:
-            url_alvo = "https://fapi.binance.com/fapi/v1/exchangeInfo"
-            url_tunel = f"{gw}{requests.utils.quote(url_alvo)}"
-            r = session.get(url_tunel, timeout=20)
+            url_tunel = formatar_url(url_completa)
+            r = session.get(url_tunel, timeout=15)
             if r.status_code == 200:
-                dados = r.json()
-                if isinstance(dados, str):
-                    dados = json.loads(dados)
-                pares = [
-                    s["symbol"]
-                    for s in dados.get("symbols", [])
-                    if s.get("quoteAsset") == "USDT"
-                    and s.get("contractType") == "PERPETUAL"
-                    and s.get("status") == "TRADING"
-                ]
-                if pares:
-                    print(f"-> Sucesso via túnel! Encontrados {len(pares)} contratos futuros perpétuos.", flush=True)
-                    return f"TUNEL|{gw}", sorted(pares)
+                texto = r.text
+                dados = json.loads(texto)
+                if isinstance(dados, (dict, list)):
+                    return dados
         except Exception:
             continue
 
-    return None, []
+    return None
 
 
-def obter_historico(origem, par):
-    """Coleta velas diárias fechadas de contratos futuros perpétuos."""
+def obter_pares_futuros():
+    """Obtém exclusivamente os contratos perpétuos em USDT da Binance."""
+    url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
+    print("-> A consultar contratos perpétuos na Binance (com rotação anti-bloqueio)...", flush=True)
+
+    dados = requisicao_segura(url, timeout=15)
+    if not dados or "symbols" not in dados:
+        return []
+
+    pares = [
+        s["symbol"]
+        for s in dados.get("symbols", [])
+        if s.get("quoteAsset") == "USDT"
+        and s.get("contractType") == "PERPETUAL"
+        and s.get("status") == "TRADING"
+    ]
+    print(f"-> Sucesso! Encontrados {len(pares)} contratos futuros perpétuos.", flush=True)
+    return sorted(pares)
+
+
+def obter_historico(par):
+    """Obtém os candles diários fechados de contratos futuros perpétuos."""
+    url = "https://fapi.binance.com/fapi/v1/klines"
     params = {"symbol": par, "interval": "1d", "limit": HISTORICO_DIAS + 2}
 
-    try:
-        if origem.startswith("TUNEL|"):
-            gw = origem.split("|")[1]
-            url_alvo = f"https://fapi.binance.com/fapi/v1/klines?symbol={par}&interval=1d&limit={HISTORICO_DIAS + 2}"
-            url = f"{gw}{requests.utils.quote(url_alvo)}"
-            r = session.get(url, timeout=10)
-        else:
-            url = f"{origem}/fapi/v1/klines"
-            r = session.get(url, params=params, timeout=10)
-
-        if r.status_code != 200:
-            return {}, {}
-
-        klines = r.json()
-        if isinstance(klines, str):
-            klines = json.loads(klines)
-
-        if not isinstance(klines, list):
-            return {}, {}
-
-        agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
-        fechamentos = {}
-        volumes = {}
-
-        for k in klines:
-            if len(k) < 8:
-                continue
-            close_time = k[6]
-            # Descarta o candle aberto de hoje
-            if close_time > agora_ms:
-                continue
-
-            # Data UTC correspondente ao fechamento
-            dt_utc = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc)
-            data_str = dt_utc.strftime("%d/%m/%Y")
-            data_iso = dt_utc.strftime("%Y-%m-%d")
-
-            fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
-            volumes[data_iso] = float(k[7])
-
-        return fechamentos, volumes
-    except Exception:
+    klines = requisicao_segura(url, params=params, timeout=10)
+    if not klines or not isinstance(klines, list):
         return {}, {}
+
+    agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    fechamentos = {}
+    volumes = {}
+
+    for k in klines:
+        if len(k) < 8:
+            continue
+        close_time = k[6]
+        # Descarta o candle aberto de hoje
+        if close_time > agora_ms:
+            continue
+
+        dt_utc = datetime.fromtimestamp(k[0] / 1000, tz=timezone.utc)
+        data_str = dt_utc.strftime("%d/%m/%Y")
+        data_iso = dt_utc.strftime("%Y-%m-%d")
+
+        fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
+        volumes[data_iso] = float(k[7])
+
+    return fechamentos, volumes
 
 
 def processar_e_salvar():
-    origem, pares = obter_pares_futuros()
+    pares = obter_pares_futuros()
     if not pares:
-        print("[ERRO FATAL] Não foi possível consultar a API de futuros.", flush=True)
+        print("[ERRO FATAL] Não foi possível obter os contratos futuros da Binance.", flush=True)
         sys.exit(1)
 
     print(f"-> Processando {len(pares)} contratos futuros perpétuos...", flush=True)
@@ -143,11 +122,11 @@ def processar_e_salvar():
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
-        if i % 30 == 0 or i == len(pares):
-            print(f"-> Analisando [{i}/{len(pares)}] futuros perpétuos...", flush=True)
+        if i % 25 == 0 or i == len(pares):
+            print(f"-> Analisando [{i}/{len(pares)}] contratos...", flush=True)
 
         try:
-            p, v = obter_historico(origem, par)
+            p, v = obter_historico(par)
             if len(p) < PERIODO_MEDIA + 1:
                 continue
 
@@ -187,7 +166,7 @@ def processar_e_salvar():
         except Exception:
             continue
 
-        time.sleep(0.02)
+        time.sleep(0.03)
 
     dados_finais = {
         "data_fechamento": data_recente_label,
@@ -198,7 +177,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado para {data_recente_label} com {len(lista_resultado)} contratos futuros perpétuos!", flush=True)
+    print(f"\n[SUCESSO] dados.json gravado para {data_recente_label} com {len(lista_resultado)} contratos futuros perpétuos!", flush=True)
 
 
 if __name__ == "__main__":
