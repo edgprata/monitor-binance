@@ -6,11 +6,12 @@ from datetime import datetime, timezone
 import requests
 import pandas as pd
 
+# Lista de servidores da Binance com cabeçalho de contorno regional
 SERVIDORES = [
+    "https://fapi.binance.com",
     "https://fapi1.binance.com",
     "https://fapi2.binance.com",
-    "https://fapi3.binance.com",
-    "https://fapi.binance.com"
+    "https://fapi3.binance.com"
 ]
 
 HISTORICO_DIAS = 35
@@ -25,8 +26,11 @@ HEADERS = {
 session = requests.Session()
 session.headers.update(HEADERS)
 
+
 def obter_pares_e_endpoint():
+    """Descobre o servidor acessível e obtém os contratos perpétuos em USDT."""
     print("-> Verificando conectividade com os servidores da Binance...", flush=True)
+
     for base_url in SERVIDORES:
         url = f"{base_url}/fapi/v1/exchangeInfo"
         print(f"   Testando endpoint: {base_url}...", flush=True)
@@ -48,7 +52,8 @@ def obter_pares_e_endpoint():
         except Exception as e:
             print(f"   Falha ao conectar em {base_url}: {e}", flush=True)
 
-    print("-> Tentando via Gateway de Contorno de Região...", flush=True)
+    # Tentativa via Proxy Aberto caso os endpoints diretos sofram bloqueio 451
+    print("-> Tentando via Gateway de Contorno...", flush=True)
     try:
         url_proxy = "https://api.allorigins.win/raw?url=" + requests.utils.quote("https://fapi.binance.com/fapi/v1/exchangeInfo")
         r = session.get(url_proxy, timeout=20)
@@ -69,7 +74,11 @@ def obter_pares_e_endpoint():
 
     return None, []
 
+
 def obter_historico(base_url, par):
+    """
+    Obtém as velas fechadas utilizando a mesma lógica UTC do script local funcional.
+    """
     if base_url == "PROXY":
         url_direta = f"https://fapi.binance.com/fapi/v1/klines?symbol={par}&interval=1d&limit={HISTORICO_DIAS + 2}"
         url = "https://api.allorigins.win/raw?url=" + requests.utils.quote(url_direta)
@@ -95,6 +104,7 @@ def obter_historico(base_url, par):
             if len(k) < 8:
                 continue
             close_time = k[6]
+            # Descarta a vela aberta em andamento
             if close_time > agora_ms:
                 continue
 
@@ -109,6 +119,7 @@ def obter_historico(base_url, par):
     except Exception:
         return {}, {}
 
+
 def processar_e_salvar():
     base_url_ativo, pares = obter_pares_e_endpoint()
     if not pares:
@@ -120,7 +131,7 @@ def processar_e_salvar():
     data_recente_label = ""
 
     for i, par in enumerate(pares, 1):
-        if i % 25 == 0 or i == len(pares):
+        if i % 30 == 0 or i == len(pares):
             print(f"-> Processando [{i}/{len(pares)}] moedas...", flush=True)
 
         try:
@@ -147,4 +158,36 @@ def processar_e_salvar():
             cv_p = (desvio_p / media_p) * 100 if media_p > 0 else 0
             media_v = serie_v.mean()
 
-            var_preco_abs = abs(((ultimo_preco - media_p) / media
+            var_preco_abs = abs(((ultimo_preco - media_p) / media_p) * 100) if media_p > 0 else 0
+            var_vol_abs = abs(((ultimo_vol - media_v) / media_v) * 100) if media_v > 0 else 0
+            operacao = "LONG" if ultimo_preco >= media_p else "SHORT"
+
+            lista_resultado.append({
+                "ativo": par,
+                "data_alerta": data_recente_label,
+                "operacao": operacao,
+                "preco": ultimo_preco,
+                "volume": ultimo_vol,
+                "var_preco": round(var_preco_abs, 2),
+                "var_volume": round(var_vol_abs, 2),
+                "cv": round(cv_p, 2)
+            })
+        except Exception:
+            continue
+
+        time.sleep(0.02)
+
+    dados_finais = {
+        "data_fechamento": data_recente_label,
+        "ativos": lista_resultado
+    }
+
+    caminho_arquivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
+    with open(caminho_arquivo, "w", encoding="utf-8") as f:
+        json.dump(dados_finais, f, ensure_ascii=False, indent=2)
+
+    print(f"\n[SUCESSO] dados.json gravado para a data: {data_recente_label} ({len(lista_resultado)} ativos)!", flush=True)
+
+
+if __name__ == "__main__":
+    processar_e_salvar()
