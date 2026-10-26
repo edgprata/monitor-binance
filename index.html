@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Billions - Crypto Operations</title>
+
+  <!-- CONFIGURAÇÕES DE ÍCONE E NOME PARA A TELA INICIAL DO CELULAR -->
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <meta name="apple-mobile-web-app-title" content="Billions">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0d1117">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -378,7 +387,6 @@
     let dadosCompletos = [];
 
     async function carregarDados() {
-      // O parâmetro ?t= forçado evita que o navegador leia cache antigo
       const urlDados = 'dados.json?t=' + new Date().getTime();
       try {
         const resposta = await fetch(urlDados);
@@ -397,7 +405,6 @@
 
         dadosCompletos = dados.ativos;
         
-        // Remove a hora mantendo apenas a data
         const dataApenas = (dados.data_fechamento || '').split(' ')[0];
         document.getElementById('subtitulo-data').innerText = `Última atualização: ${dataApenas} (Fechamento diário às 21h)`;
         
@@ -435,12 +442,10 @@
       filtrados.forEach(item => {
         const tr = document.createElement('tr');
         
-        // SINAL: Apenas a bolinha sólida verde (LONG) ou vermelha (SHORT)
         const sinalHTML = item.operacao === 'LONG'
           ? `<span class="dot-long" title="LONG">●</span>`
           : `<span class="dot-short" title="SHORT">●</span>`;
 
-        // DATA: Apenas a data sem horário
         const dataSemHora = (item.data_alerta || '').split(' ')[0];
 
         tr.innerHTML = `
