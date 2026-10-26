@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sinais - Monitor de Futuros Binance</title>
+  <title>Billions - Crypto Operations</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -22,45 +22,42 @@
 
     /* BARRA LATERAL (DESKTOP) */
     .sidebar {
-      width: 240px;
-      background-color: #1a0b2e;
+      width: 260px;
+      background-color: #0d1117;
       color: #cbd5e1;
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .sidebar-header {
-      padding: 24px 20px;
+      padding: 24px 18px;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .sidebar-logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      display: inline-flex;
-      align-items: center;
+      display: flex;
       justify-content: center;
-      font-size: 26px;
-      color: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      margin-bottom: 10px;
+      align-items: center;
     }
 
-    .sidebar-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #ffffff;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+    /* ESTILO DO LOGOTIPO */
+    .brand-logo {
+      width: 100%;
+      max-width: 220px;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.25));
+      transition: transform 0.2s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
     }
 
     .sidebar-menu {
       list-style: none;
-      padding: 15px 0;
+      padding: 18px 0;
     }
 
     .sidebar-menu li a {
@@ -70,18 +67,21 @@
       color: #94a3b8;
       text-decoration: none;
       font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
     }
 
     .sidebar-menu li a i {
       margin-right: 14px;
       width: 18px;
       text-align: center;
+      color: #38bdf8;
     }
 
     .sidebar-menu li.active a {
-      background-color: #2e1065;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), transparent);
       color: #ffffff;
-      border-left: 4px solid #3b82f6;
+      border-left: 4px solid #38bdf8;
     }
 
     /* ÁREA PRINCIPAL */
@@ -94,7 +94,7 @@
 
     .header-page {
       margin-bottom: 20px;
-      border-bottom: 3px solid #3b82f6;
+      border-bottom: 3px solid #0284c7;
       padding-bottom: 12px;
     }
 
@@ -102,6 +102,9 @@
       font-size: 22px;
       color: #0f172a;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .header-page p {
@@ -151,9 +154,13 @@
       width: 100%;
     }
 
+    .filter-item input:focus {
+      border-color: #0284c7;
+    }
+
     .btn-apply {
       padding: 9px 20px;
-      background-color: #3b82f6;
+      background-color: #0284c7;
       color: white;
       border: none;
       border-radius: 6px;
@@ -166,7 +173,7 @@
     }
 
     .btn-apply:hover {
-      background-color: #2563eb;
+      background-color: #0369a1;
     }
 
     /* TABELA RESPONSIVA */
@@ -214,7 +221,7 @@
       background-color: #f8fafc;
     }
 
-    /* SINAIS (APENAS BOLINHA VERDE OU VERMELHA) */
+    /* SINAIS (BOLINHAS VERDE OU VERMELHA) */
     .dot-long {
       color: #10b981;
       font-size: 18px;
@@ -238,17 +245,17 @@
     }
 
     .copy-btn {
-      color: #3b82f6;
+      color: #0284c7;
       cursor: pointer;
       font-size: 13px;
       padding: 4px;
     }
 
     .copy-btn:hover {
-      color: #1d4ed8;
+      color: #0369a1;
     }
 
-    /* REGRAS DE RESPONSIVIDADE PARA CELULAR */
+    /* REGRAS DE RESPONSIVIDADE PARA TELEMÓVEL */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -259,26 +266,17 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 16px;
+        padding: 10px 16px;
       }
 
       .sidebar-header {
         padding: 0;
         border-bottom: none;
-        display: flex;
-        align-items: center;
-        gap: 10px;
       }
 
-      .sidebar-logo {
-        width: 34px;
-        height: 34px;
-        font-size: 15px;
-        margin-bottom: 0;
-      }
-
-      .sidebar-title {
-        font-size: 14px;
+      .brand-logo {
+        max-width: 150px;
+        height: 38px;
       }
 
       .sidebar-menu {
@@ -287,13 +285,13 @@
       }
 
       .sidebar-menu li a {
-        padding: 6px 10px;
+        padding: 6px 12px;
         font-size: 13px;
       }
 
       .sidebar-menu li.active a {
         border-left: none;
-        border-bottom: 3px solid #3b82f6;
+        border-bottom: 3px solid #38bdf8;
         background: transparent;
       }
 
@@ -323,16 +321,13 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL (CABEÇALHO NO CELULAR) -->
+  <!-- BARRA LATERAL COM O LOGOTIPO OFICIAL -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <i class="fa-solid fa-chart-line"></i>
-      </div>
-      <div class="sidebar-title">Sinais</div>
+      <img src="logo.png" alt="Billions Crypto Operations" class="brand-logo">
     </div>
     <ul class="sidebar-menu">
-      <li class="active"><a href="#"><i class="fa-solid fa-bolt"></i> Sinais</a></li>
+      <li class="active"><a href="#"><i class="fa-solid fa-chart-line"></i> Sinais Diários</a></li>
     </ul>
   </aside>
 
@@ -392,7 +387,6 @@
         }
         const dados = await resposta.json();
 
-        // Verificação segura: garante que dados.ativos existe e é uma lista
         if (!dados.ativos || !Array.isArray(dados.ativos) || dados.ativos.length === 0) {
           document.getElementById('tabela-corpo').innerHTML = 
             '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:20px;">' +
