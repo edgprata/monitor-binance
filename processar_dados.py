@@ -1,3 +1,12 @@
+"""
+Projeto: Processamento de Dados de Futuros (Binance & OKX) para GitHub Actions
+Autor: Parceiro de Programação
+
+Ajuste Crucial:
+  - Atualização da rota da OKX para bar="1Dutc" para sincronizar com as velas oficiais das 21h00 BRT
+    e garantir que o valor da letra C (close) bata 100% com os gráficos na web.
+"""
+
 import os
 import sys
 import json
@@ -187,7 +196,7 @@ def processar_binance():
 
 
 # ==============================================================================
-# MÓDULO 2: COLETA OKX SWAP (PERPÉTUA)
+# MÓDULO 2: COLETA OKX SWAP (PERPÉTUA COM 1Dutc)
 # ==============================================================================
 def obter_pares_okx():
     url = f"{OKX_BASE}/api/v5/public/instruments"
@@ -212,7 +221,8 @@ def obter_pares_okx():
 
 def obter_historico_okx(par):
     url = f"{OKX_BASE}/api/v5/market/candles"
-    params = {"instId": par, "bar": "1D", "limit": str(HISTORICO_DIAS + 2)}
+    # Uso fundamental do bar="1Dutc" para fechar exatamente as 21h00 BRT (00:00 UTC)
+    params = {"instId": par, "bar": "1Dutc", "limit": str(HISTORICO_DIAS + 4)}
 
     try:
         r = session.get(url, params=params, timeout=8)
@@ -224,30 +234,36 @@ def obter_historico_okx(par):
             return {}, {}
 
         klines = dados.get("data", [])
-        if not isinstance(klines, list):
+        if not isinstance(klines, list) or len(klines) == 0:
             return {}, {}
 
         agora_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
         fechamentos = {}
         volumes = {}
 
-        for k in klines:
+        # Ordena do mais antigo para o mais recente
+        klines_ordenados = sorted(klines, key=lambda x: int(x[0]))
+
+        for k in klines_ordenados:
             ts_abertura = int(k[0])
             ts_fechamento = ts_abertura + 86400000
 
-            # Descarta candle aberto
-            if len(k) > 8 and k[8] == "0":
-                continue
+            # 1. Descarta a vela aberta de hoje em andamento
             if ts_fechamento > agora_ms:
+                continue
+
+            # 2. Descarta se a OKX marcar a vela com status não confirmado (confirm == '0')
+            if len(k) > 8 and str(k[8]).strip() == "0":
                 continue
 
             dt_utc = datetime.fromtimestamp(ts_abertura / 1000, tz=timezone.utc)
             data_str = dt_utc.strftime("%d/%m/%Y")
             data_iso = dt_utc.strftime("%Y-%m-%d")
 
+            # k[4] é o campo C (Close) oficial auditado
             fechamentos[data_iso] = {"valor": float(k[4]), "formatada": data_str}
 
-            # Volume em USDT
+            # Volume em USDT (índice 7) ou por contrato (índice 5 * índice 4)
             if len(k) > 7 and float(k[7]) > 0:
                 volumes[data_iso] = float(k[7])
             else:
@@ -297,7 +313,7 @@ def processar_okx():
             var_v = abs(((u_vol - med_v) / med_v) * 100) if med_v > 0 else 0
             op = "LONG" if u_preco >= med_p else "SHORT"
 
-            # Remove o sufixo -SWAP para facilitar leitura na tabela
+            # Remove o sufixo -SWAP para exibição limpa no site
             ticker_limpo = par.replace("-SWAP", "")
 
             resultado.append({
@@ -320,17 +336,16 @@ def processar_okx():
 
 
 # ==============================================================================
-# GRAVAÇÃO CONSOLIDADA
+# GRAVAÇÃO CONSOLIDADA NO DADOS.JSON
 # ==============================================================================
 def processar_e_salvar():
     data_binance, ativos_binance = processar_binance()
     data_okx, ativos_okx = processar_okx()
 
-    data_geral = data_binance or data_okx or datetime.now(timezone.utc).strftime("%d/%m/%Y")
+    data_geral = data_okx or data_binance or datetime.now(timezone.utc).strftime("%d/%m/%Y")
 
     dados_finais = {
         "data_fechamento": data_geral,
-        # Mantém compatibilidade com a chave raiz antiga
         "ativos": ativos_binance if ativos_binance else ativos_okx,
         "binance": {
             "data_fechamento": data_binance,
@@ -346,7 +361,7 @@ def processar_e_salvar():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-    print(f"\n[SUCESSO] dados.json gerado!")
+    print(f"\n[SUCESSO] dados.json gerado com fechamentos oficiais alinhados!")
     print(f" -> Binance: {len(ativos_binance)} ativos ({data_binance})")
     print(f" -> OKX:     {len(ativos_okx)} ativos ({data_okx})", flush=True)
 
