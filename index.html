@@ -49,7 +49,6 @@
       align-items: center;
     }
 
-    /* ESTILO DO LOGOTIPO */
     .brand-logo {
       width: 100%;
       max-width: 220px;
@@ -57,16 +56,21 @@
       display: block;
       object-fit: contain;
       filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.25));
-      transition: transform 0.2s ease;
-    }
-
-    .brand-logo:hover {
-      transform: scale(1.02);
     }
 
     .sidebar-menu {
       list-style: none;
       padding: 18px 0;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      padding: 8px 24px;
+      margin-top: 10px;
     }
 
     .sidebar-menu li a {
@@ -77,6 +81,7 @@
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
+      cursor: pointer;
       transition: all 0.2s;
     }
 
@@ -105,6 +110,11 @@
       margin-bottom: 20px;
       border-bottom: 3px solid #0284c7;
       padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .header-page h1 {
@@ -114,6 +124,17 @@
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .badge-corretora {
+      font-size: 12px;
+      background: #0284c7;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
     .header-page p {
@@ -230,7 +251,6 @@
       background-color: #f8fafc;
     }
 
-    /* SINAIS (BOLINHAS VERDE OU VERMELHA) */
     .dot-long {
       color: #10b981;
       font-size: 18px;
@@ -264,7 +284,7 @@
       color: #0369a1;
     }
 
-    /* REGRAS DE RESPONSIVIDADE PARA TELEMÓVEL */
+    /* RESPONSIVIDADE MOBILE */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -272,36 +292,41 @@
 
       .sidebar {
         width: 100%;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
         padding: 10px 16px;
       }
 
       .sidebar-header {
-        padding: 0;
+        padding: 6px 0;
         border-bottom: none;
       }
 
       .brand-logo {
-        max-width: 150px;
+        max-width: 160px;
         height: 38px;
+      }
+
+      .sidebar-section-title {
+        display: none;
       }
 
       .sidebar-menu {
         display: flex;
-        padding: 0;
+        justify-content: center;
+        gap: 8px;
+        padding: 6px 0 0 0;
       }
 
       .sidebar-menu li a {
-        padding: 6px 12px;
+        padding: 6px 14px;
         font-size: 13px;
+        border-radius: 6px;
       }
 
       .sidebar-menu li.active a {
         border-left: none;
         border-bottom: 3px solid #38bdf8;
-        background: transparent;
+        background: rgba(56, 189, 248, 0.15);
       }
 
       .main-content {
@@ -330,21 +355,36 @@
 </head>
 <body>
 
-  <!-- BARRA LATERAL COM O LOGOTIPO OFICIAL -->
+  <!-- BARRA LATERAL COM SELEÇÃO DE CORRETORAS -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <img src="logo.png" alt="Billions Crypto Operations" class="brand-logo">
     </div>
+    <div class="sidebar-section-title">Mercados Futuros</div>
     <ul class="sidebar-menu">
-      <li class="active"><a href="#"><i class="fa-solid fa-chart-line"></i> Sinais Diários</a></li>
+      <li id="menu-binance" class="active">
+        <a onclick="trocarCorretora('binance')">
+          <i class="fa-solid fa-chart-line"></i> Binance Futures
+        </a>
+      </li>
+      <li id="menu-okx">
+        <a onclick="trocarCorretora('okx')">
+          <i class="fa-solid fa-layer-group"></i> OKX Perpetuals
+        </a>
+      </li>
     </ul>
   </aside>
 
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-content">
     <div class="header-page">
-      <h1>Sinais - Gráfico Diário (21h)</h1>
-      <p id="subtitulo-data">A carregar dados do fechamento...</p>
+      <div>
+        <h1>
+          Sinais Diários (21h)
+          <span id="badge-nome" class="badge-corretora">BINANCE</span>
+        </h1>
+        <p id="subtitulo-data">A carregar dados do fechamento...</p>
+      </div>
     </div>
 
     <!-- PARÂMETROS EDITÁVEIS -->
@@ -371,7 +411,7 @@
           <tr>
             <th style="width: 70px; text-align: center;">Sinal</th>
             <th>Data Alerta</th>
-            <th>Nome do Ativo USDT.P</th>
+            <th>Nome do Ativo</th>
             <th>Preço</th>
             <th>Volume (USDT)</th>
           </tr>
@@ -384,37 +424,37 @@
   </main>
 
   <script>
-    let dadosCompletos = [];
+    let dadosJson = {};
+    let corretoraAtiva = 'binance'; // Padrão inicial: 'binance' ou 'okx'
 
     async function carregarDados() {
-      const urlDados = 'dados.json?t=' + new Date().getTime();
+      const url = 'dados.json?t=' + new Date().getTime();
       try {
-        const resposta = await fetch(urlDados);
-        if (!resposta.ok) {
-          throw new Error('Código HTTP ' + resposta.status);
-        }
-        const dados = await resposta.json();
-
-        if (!dados.ativos || !Array.isArray(dados.ativos) || dados.ativos.length === 0) {
-          document.getElementById('tabela-corpo').innerHTML = 
-            '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:20px;">' +
-            'O arquivo dados.json precisa de ser atualizado pelo GitHub Actions.' +
-            '</td></tr>';
-          return;
-        }
-
-        dadosCompletos = dados.ativos;
-        
-        const dataApenas = (dados.data_fechamento || '').split(' ')[0];
-        document.getElementById('subtitulo-data').innerText = `Última atualização: ${dataApenas} (Fechamento diário às 21h)`;
-        
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('Código HTTP ' + resp.status);
+        dadosJson = await resp.json();
         renderizarTabela();
-      } catch (erro) {
+      } catch (err) {
         document.getElementById('tabela-corpo').innerHTML = 
           `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:24px;">
-            Erro ao carregar dados.json (${erro.message}). Verifique se o arquivo existe na raiz do repositório.
+            Erro ao carregar dados.json (${err.message}).
           </td></tr>`;
       }
+    }
+
+    function trocarCorretora(nova) {
+      corretoraAtiva = nova;
+
+      // Atualiza o menu ativo
+      document.getElementById('menu-binance').classList.toggle('active', nova === 'binance');
+      document.getElementById('menu-okx').classList.toggle('active', nova === 'okx');
+
+      // Atualiza o badge do cabeçalho
+      const badge = document.getElementById('badge-nome');
+      badge.innerText = nova.toUpperCase();
+      badge.style.background = (nova === 'binance') ? '#0284c7' : '#059669';
+
+      renderizarTabela();
     }
 
     function copiarTexto(texto) {
@@ -423,6 +463,24 @@
     }
 
     function renderizarTabela() {
+      // Extrai os ativos e a data da corretora selecionada
+      let listaAtivos = [];
+      let dataFechamento = '';
+
+      if (dadosJson[corretoraAtiva] && Array.isArray(dadosJson[corretoraAtiva].ativos)) {
+        listaAtivos = dadosJson[corretoraAtiva].ativos;
+        dataFechamento = dadosJson[corretoraAtiva].data_fechamento || '';
+      } else if (Array.isArray(dadosJson.ativos)) {
+        // Fallback caso o arquivo antigo ainda esteja carregado
+        listaAtivos = dadosJson.ativos;
+        dataFechamento = dadosJson.data_fechamento || '';
+      }
+
+      const dataApenas = (dataFechamento || '').split(' ')[0];
+      const nomeLegivel = corretoraAtiva === 'binance' ? 'Binance Futures' : 'OKX Perpetuals';
+      document.getElementById('subtitulo-data').innerText = 
+        `Última atualização: ${dataApenas || 'N/D'} (${nomeLegivel} - Fechamento 21h)`;
+
       const minVol = parseFloat(document.getElementById('filtroVol').value);
       const maxCV = parseFloat(document.getElementById('filtroCV').value);
       const minVar = parseFloat(document.getElementById('filtroVar').value);
@@ -430,7 +488,12 @@
       const tbody = document.getElementById('tabela-corpo');
       tbody.innerHTML = '';
 
-      const filtrados = dadosCompletos.filter(item => {
+      if (!listaAtivos || listaAtivos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#ef4444;">Nenhum dado encontrado para esta corretora. Aguarde a próxima atualização.</td></tr>';
+        return;
+      }
+
+      const filtrados = listaAtivos.filter(item => {
         return item.var_volume >= minVol && item.cv <= maxCV && item.var_preco >= minVar;
       });
 
@@ -447,13 +510,16 @@
           : `<span class="dot-short" title="SHORT">●</span>`;
 
         const dataSemHora = (item.data_alerta || '').split(' ')[0];
+        
+        // Identificação do ativo (.P na Binance e nome puro na OKX)
+        const sufixoVisual = corretoraAtiva === 'binance' ? '.P' : '';
 
         tr.innerHTML = `
           <td style="text-align:center;">${sinalHTML}</td>
           <td>${dataSemHora}</td>
           <td>
             <span class="asset-name">
-              ${item.ativo}.P 
+              ${item.ativo}${sufixoVisual}
               <i class="fa-regular fa-copy copy-btn" onclick="copiarTexto('${item.ativo}')" title="Copiar"></i>
             </span>
           </td>
