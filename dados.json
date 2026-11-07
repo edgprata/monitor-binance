@@ -3512,6 +3512,76 @@
       "cv": 8.97
     },
     {
+      "ativo": "PNUTUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.03627,
+      "volume": 3203348.48026,
+      "var_preco": 11.99,
+      "var_volume": 5.78,
+      "cv": 6.57
+    },
+    {
+      "ativo": "POLUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.09266,
+      "volume": 9337219.86938,
+      "var_preco": 1.02,
+      "var_volume": 21.84,
+      "cv": 2.5
+    },
+    {
+      "ativo": "POLYXUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.03143,
+      "volume": 865544.66767,
+      "var_preco": 5.66,
+      "var_volume": 70.25,
+      "cv": 3.59
+    },
+    {
+      "ativo": "PONSUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.1945,
+      "volume": 20012438.8495,
+      "var_preco": 20.55,
+      "var_volume": 31.83,
+      "cv": 12.01
+    },
+    {
+      "ativo": "POPCATUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.03745,
+      "volume": 1030390.1569,
+      "var_preco": 12.07,
+      "var_volume": 33.64,
+      "cv": 6.71
+    },
+    {
+      "ativo": "PORTALUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01236,
+      "volume": 1584725.473888,
+      "var_preco": 9.46,
+      "var_volume": 26.78,
+      "cv": 6.39
+    },
+    {
+      "ativo": "POWERUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.07026,
+      "volume": 1398956.41452,
+      "var_preco": 7.03,
+      "var_volume": 7.55,
+      "cv": 5.26
+    },
+    {
       "ativo": "POWRUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "LONG",
@@ -3680,6 +3750,16 @@
       "var_preco": 8.9,
       "var_volume": 19.43,
       "cv": 6.19
+    },
+    {
+      "ativo": "REUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.3067,
+      "volume": 3413023.7118,
+      "var_preco": 15.42,
+      "var_volume": 45.75,
+      "cv": 8.35
     },
     {
       "ativo": "REZUSDT",
@@ -3882,6 +3962,16 @@
       "cv": 6.72
     },
     {
+      "ativo": "SFPUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.2178,
+      "volume": 887690.2284,
+      "var_preco": 6.76,
+      "var_volume": 20.67,
+      "cv": 7.8
+    },
+    {
       "ativo": "SHELLUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "SHORT",
@@ -3952,6 +4042,16 @@
       "cv": 4.96
     },
     {
+      "ativo": "SLPUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.0004831,
+      "volume": 738426.1295289,
+      "var_preco": 8.18,
+      "var_volume": 56.85,
+      "cv": 6.24
+    },
+    {
       "ativo": "SLXUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "SHORT",
@@ -3962,6 +4062,16 @@
       "cv": 10.02
     },
     {
+      "ativo": "SNXUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.1707,
+      "volume": 1687840.58889,
+      "var_preco": 13.23,
+      "var_volume": 15.32,
+      "cv": 8.97
+    },
+    {
       "ativo": "SOLUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "SHORT",
@@ -3970,6 +4080,26 @@
       "var_preco": 9.54,
       "var_volume": 13.66,
       "cv": 5.21
+    },
+    {
+      "ativo": "SOLVUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.004436,
+      "volume": 1967083.587366,
+      "var_preco": 3.22,
+      "var_volume": 63.25,
+      "cv": 6.79
+    },
+    {
+      "ativo": "SOMIUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.167,
+      "volume": 695054.371,
+      "var_preco": 7.69,
+      "var_volume": 48.86,
+      "cv": 5.18
     },
     {
       "ativo": "SONICUSDT",
@@ -4010,6 +4140,156 @@
       "var_preco": 5.97,
       "var_volume": 21.99,
       "cv": 4.28
+    },
+    {
+      "ativo": "SPELLUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 7.36e-05,
+      "volume": 701811.8541086,
+      "var_preco": 8.42,
+      "var_volume": 22.24,
+      "cv": 5.13
+    },
+    {
+      "ativo": "SPKUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01622,
+      "volume": 1717566.28773,
+      "var_preco": 10.74,
+      "var_volume": 47.57,
+      "cv": 6.2
+    },
+    {
+      "ativo": "SPORTFUNUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01352,
+      "volume": 731680.21963,
+      "var_preco": 10.53,
+      "var_volume": 19.75,
+      "cv": 7.19
+    },
+    {
+      "ativo": "SPXUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.3607,
+      "volume": 5050939.6573,
+      "var_preco": 1.39,
+      "var_volume": 33.7,
+      "cv": 4.11
+    },
+    {
+      "ativo": "SQDUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01825,
+      "volume": 1200493.72814,
+      "var_preco": 5.97,
+      "var_volume": 22.17,
+      "cv": 5.4
+    },
+    {
+      "ativo": "SSVUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 2.243,
+      "volume": 941032.74247,
+      "var_preco": 7.15,
+      "var_volume": 24.78,
+      "cv": 5.36
+    },
+    {
+      "ativo": "STABLEUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.02489,
+      "volume": 3029201.610414,
+      "var_preco": 5.87,
+      "var_volume": 9.28,
+      "cv": 2.94
+    },
+    {
+      "ativo": "STARUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.03825,
+      "volume": 2137828.17432,
+      "var_preco": 11.36,
+      "var_volume": 33.99,
+      "cv": 6.02
+    },
+    {
+      "ativo": "STBLUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.02358,
+      "volume": 727292.91659,
+      "var_preco": 7.99,
+      "var_volume": 83.99,
+      "cv": 6.19
+    },
+    {
+      "ativo": "STEEMUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.04802,
+      "volume": 660446.42868,
+      "var_preco": 4.45,
+      "var_volume": 80.23,
+      "cv": 4.76
+    },
+    {
+      "ativo": "STOUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.02759,
+      "volume": 1347143.77384,
+      "var_preco": 12.51,
+      "var_volume": 0.47,
+      "cv": 6.15
+    },
+    {
+      "ativo": "STRKUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.04082,
+      "volume": 20558457.382976,
+      "var_preco": 15.96,
+      "var_volume": 67.58,
+      "cv": 14.94
+    },
+    {
+      "ativo": "STXUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.3457,
+      "volume": 14368659.4399,
+      "var_preco": 5.96,
+      "var_volume": 10.24,
+      "cv": 8.24
+    },
+    {
+      "ativo": "SUIUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.8687,
+      "volume": 156206551.63552,
+      "var_preco": 7.21,
+      "var_volume": 17.06,
+      "cv": 5.59
+    },
+    {
+      "ativo": "SUNUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.015588,
+      "volume": 769318.682813,
+      "var_preco": 3.48,
+      "var_volume": 51.38,
+      "cv": 3.2
     },
     {
       "ativo": "SUPERUSDT",
@@ -4262,6 +4542,26 @@
       "cv": 9.81
     },
     {
+      "ativo": "TRUSTUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.06332,
+      "volume": 4045625.60143,
+      "var_preco": 22.03,
+      "var_volume": 46.42,
+      "cv": 6.62
+    },
+    {
+      "ativo": "TRUTHUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.017806,
+      "volume": 3190515.71535,
+      "var_preco": 8.45,
+      "var_volume": 55.7,
+      "cv": 6.64
+    },
+    {
       "ativo": "TRXUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "SHORT",
@@ -4290,6 +4590,276 @@
       "var_preco": 9.89,
       "var_volume": 3.1,
       "cv": 5.73
+    },
+    {
+      "ativo": "TURTLEUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.03762,
+      "volume": 859639.76085,
+      "var_preco": 5.59,
+      "var_volume": 40.77,
+      "cv": 3.27
+    },
+    {
+      "ativo": "TUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.004597,
+      "volume": 3002918.329928,
+      "var_preco": 2.3,
+      "var_volume": 86.23,
+      "cv": 4.11
+    },
+    {
+      "ativo": "TUTUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01693,
+      "volume": 2252310.58355,
+      "var_preco": 6.21,
+      "var_volume": 36.57,
+      "cv": 5.22
+    },
+    {
+      "ativo": "TWTUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.3979,
+      "volume": 1086481.1827,
+      "var_preco": 7.77,
+      "var_volume": 9.08,
+      "cv": 5.47
+    },
+    {
+      "ativo": "UAIUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.1408,
+      "volume": 405802669.249,
+      "var_preco": 41.27,
+      "var_volume": 2065.93,
+      "cv": 34.17
+    },
+    {
+      "ativo": "UBUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.1078,
+      "volume": 1639215.58416,
+      "var_preco": 8.62,
+      "var_volume": 27.78,
+      "cv": 6.29
+    },
+    {
+      "ativo": "UMAUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.3293,
+      "volume": 947650.9943,
+      "var_preco": 7.44,
+      "var_volume": 15.15,
+      "cv": 5.67
+    },
+    {
+      "ativo": "UNIUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 6.884,
+      "volume": 157636326.713,
+      "var_preco": 3.35,
+      "var_volume": 20.77,
+      "cv": 3.56
+    },
+    {
+      "ativo": "USDCUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 1.000563,
+      "volume": 14146534.158457,
+      "var_preco": 0.0,
+      "var_volume": 200.18,
+      "cv": 0.02
+    },
+    {
+      "ativo": "USELESSUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.13198,
+      "volume": 16811311.87855,
+      "var_preco": 10.06,
+      "var_volume": 36.18,
+      "cv": 11.27
+    },
+    {
+      "ativo": "USTCUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.00433,
+      "volume": 541655.330232,
+      "var_preco": 9.98,
+      "var_volume": 59.34,
+      "cv": 5.62
+    },
+    {
+      "ativo": "USUALUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.010461,
+      "volume": 3328150.828611,
+      "var_preco": 0.86,
+      "var_volume": 147.13,
+      "cv": 2.96
+    },
+    {
+      "ativo": "USUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.004805,
+      "volume": 5176528.511657,
+      "var_preco": 7.77,
+      "var_volume": 58.9,
+      "cv": 9.05
+    },
+    {
+      "ativo": "VANAUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.7617,
+      "volume": 822496.078844,
+      "var_preco": 9.82,
+      "var_volume": 44.71,
+      "cv": 6.37
+    },
+    {
+      "ativo": "VELVETUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.04941,
+      "volume": 1629807.96668,
+      "var_preco": 14.54,
+      "var_volume": 31.69,
+      "cv": 10.75
+    },
+    {
+      "ativo": "VETUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.005429,
+      "volume": 3596365.106097,
+      "var_preco": 15.24,
+      "var_volume": 28.77,
+      "cv": 9.93
+    },
+    {
+      "ativo": "VIRTUALUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.5678,
+      "volume": 10735342.14813,
+      "var_preco": 8.75,
+      "var_volume": 26.34,
+      "cv": 5.91
+    },
+    {
+      "ativo": "VTHOUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.0005383,
+      "volume": 1195327.8877437,
+      "var_preco": 9.04,
+      "var_volume": 48.86,
+      "cv": 7.03
+    },
+    {
+      "ativo": "VVVUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 20.795,
+      "volume": 25013742.72207,
+      "var_preco": 12.57,
+      "var_volume": 26.08,
+      "cv": 7.39
+    },
+    {
+      "ativo": "WALUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.02908,
+      "volume": 6154298.101,
+      "var_preco": 13.81,
+      "var_volume": 36.3,
+      "cv": 13.02
+    },
+    {
+      "ativo": "WAXPUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.003981,
+      "volume": 566318.644731,
+      "var_preco": 11.43,
+      "var_volume": 38.04,
+      "cv": 5.54
+    },
+    {
+      "ativo": "WCTUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.03188,
+      "volume": 759775.20801,
+      "var_preco": 8.85,
+      "var_volume": 65.48,
+      "cv": 4.74
+    },
+    {
+      "ativo": "WETUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.05388,
+      "volume": 757115.71198,
+      "var_preco": 1.95,
+      "var_volume": 88.11,
+      "cv": 5.52
+    },
+    {
+      "ativo": "WIFUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.1639,
+      "volume": 10692208.13583,
+      "var_preco": 10.88,
+      "var_volume": 23.25,
+      "cv": 7.44
+    },
+    {
+      "ativo": "WLDUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.3437,
+      "volume": 113804799.4875,
+      "var_preco": 23.59,
+      "var_volume": 51.64,
+      "cv": 16.12
+    },
+    {
+      "ativo": "WLFIUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.0465,
+      "volume": 51494074.30175,
+      "var_preco": 11.18,
+      "var_volume": 83.56,
+      "cv": 5.71
+    },
+    {
+      "ativo": "WOOUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "LONG",
+      "preco": 0.0122,
+      "volume": 3723514.36236,
+      "var_preco": 11.32,
+      "var_volume": 29.16,
+      "cv": 6.36
     },
     {
       "ativo": "WUSDT",
@@ -4392,6 +4962,16 @@
       "cv": 2.97
     },
     {
+      "ativo": "XTZUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.2743,
+      "volume": 11681943.13342,
+      "var_preco": 1.53,
+      "var_volume": 194.17,
+      "cv": 8.77
+    },
+    {
       "ativo": "XVGUSDT",
       "data_alerta": "06/11/2026",
       "operacao": "SHORT",
@@ -4470,6 +5050,26 @@
       "var_preco": 7.67,
       "var_volume": 42.84,
       "cv": 4.89
+    },
+    {
+      "ativo": "ZENUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 5.187,
+      "volume": 5955025.2116,
+      "var_preco": 8.43,
+      "var_volume": 21.02,
+      "cv": 6.76
+    },
+    {
+      "ativo": "ZEREBROUSDT",
+      "data_alerta": "06/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.024574,
+      "volume": 2371191.862612,
+      "var_preco": 8.22,
+      "var_volume": 82.51,
+      "cv": 9.61
     },
     {
       "ativo": "ZESTUSDT",
@@ -8126,6 +8726,76 @@
         "cv": 8.97
       },
       {
+        "ativo": "PNUTUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.03627,
+        "volume": 3203348.48026,
+        "var_preco": 11.99,
+        "var_volume": 5.78,
+        "cv": 6.57
+      },
+      {
+        "ativo": "POLUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.09266,
+        "volume": 9337219.86938,
+        "var_preco": 1.02,
+        "var_volume": 21.84,
+        "cv": 2.5
+      },
+      {
+        "ativo": "POLYXUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.03143,
+        "volume": 865544.66767,
+        "var_preco": 5.66,
+        "var_volume": 70.25,
+        "cv": 3.59
+      },
+      {
+        "ativo": "PONSUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.1945,
+        "volume": 20012438.8495,
+        "var_preco": 20.55,
+        "var_volume": 31.83,
+        "cv": 12.01
+      },
+      {
+        "ativo": "POPCATUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.03745,
+        "volume": 1030390.1569,
+        "var_preco": 12.07,
+        "var_volume": 33.64,
+        "cv": 6.71
+      },
+      {
+        "ativo": "PORTALUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01236,
+        "volume": 1584725.473888,
+        "var_preco": 9.46,
+        "var_volume": 26.78,
+        "cv": 6.39
+      },
+      {
+        "ativo": "POWERUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.07026,
+        "volume": 1398956.41452,
+        "var_preco": 7.03,
+        "var_volume": 7.55,
+        "cv": 5.26
+      },
+      {
         "ativo": "POWRUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "LONG",
@@ -8294,6 +8964,16 @@
         "var_preco": 8.9,
         "var_volume": 19.43,
         "cv": 6.19
+      },
+      {
+        "ativo": "REUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.3067,
+        "volume": 3413023.7118,
+        "var_preco": 15.42,
+        "var_volume": 45.75,
+        "cv": 8.35
       },
       {
         "ativo": "REZUSDT",
@@ -8496,6 +9176,16 @@
         "cv": 6.72
       },
       {
+        "ativo": "SFPUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.2178,
+        "volume": 887690.2284,
+        "var_preco": 6.76,
+        "var_volume": 20.67,
+        "cv": 7.8
+      },
+      {
         "ativo": "SHELLUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "SHORT",
@@ -8566,6 +9256,16 @@
         "cv": 4.96
       },
       {
+        "ativo": "SLPUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.0004831,
+        "volume": 738426.1295289,
+        "var_preco": 8.18,
+        "var_volume": 56.85,
+        "cv": 6.24
+      },
+      {
         "ativo": "SLXUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "SHORT",
@@ -8576,6 +9276,16 @@
         "cv": 10.02
       },
       {
+        "ativo": "SNXUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.1707,
+        "volume": 1687840.58889,
+        "var_preco": 13.23,
+        "var_volume": 15.32,
+        "cv": 8.97
+      },
+      {
         "ativo": "SOLUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "SHORT",
@@ -8584,6 +9294,26 @@
         "var_preco": 9.54,
         "var_volume": 13.66,
         "cv": 5.21
+      },
+      {
+        "ativo": "SOLVUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.004436,
+        "volume": 1967083.587366,
+        "var_preco": 3.22,
+        "var_volume": 63.25,
+        "cv": 6.79
+      },
+      {
+        "ativo": "SOMIUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.167,
+        "volume": 695054.371,
+        "var_preco": 7.69,
+        "var_volume": 48.86,
+        "cv": 5.18
       },
       {
         "ativo": "SONICUSDT",
@@ -8624,6 +9354,156 @@
         "var_preco": 5.97,
         "var_volume": 21.99,
         "cv": 4.28
+      },
+      {
+        "ativo": "SPELLUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 7.36e-05,
+        "volume": 701811.8541086,
+        "var_preco": 8.42,
+        "var_volume": 22.24,
+        "cv": 5.13
+      },
+      {
+        "ativo": "SPKUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01622,
+        "volume": 1717566.28773,
+        "var_preco": 10.74,
+        "var_volume": 47.57,
+        "cv": 6.2
+      },
+      {
+        "ativo": "SPORTFUNUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01352,
+        "volume": 731680.21963,
+        "var_preco": 10.53,
+        "var_volume": 19.75,
+        "cv": 7.19
+      },
+      {
+        "ativo": "SPXUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.3607,
+        "volume": 5050939.6573,
+        "var_preco": 1.39,
+        "var_volume": 33.7,
+        "cv": 4.11
+      },
+      {
+        "ativo": "SQDUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01825,
+        "volume": 1200493.72814,
+        "var_preco": 5.97,
+        "var_volume": 22.17,
+        "cv": 5.4
+      },
+      {
+        "ativo": "SSVUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 2.243,
+        "volume": 941032.74247,
+        "var_preco": 7.15,
+        "var_volume": 24.78,
+        "cv": 5.36
+      },
+      {
+        "ativo": "STABLEUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.02489,
+        "volume": 3029201.610414,
+        "var_preco": 5.87,
+        "var_volume": 9.28,
+        "cv": 2.94
+      },
+      {
+        "ativo": "STARUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.03825,
+        "volume": 2137828.17432,
+        "var_preco": 11.36,
+        "var_volume": 33.99,
+        "cv": 6.02
+      },
+      {
+        "ativo": "STBLUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.02358,
+        "volume": 727292.91659,
+        "var_preco": 7.99,
+        "var_volume": 83.99,
+        "cv": 6.19
+      },
+      {
+        "ativo": "STEEMUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.04802,
+        "volume": 660446.42868,
+        "var_preco": 4.45,
+        "var_volume": 80.23,
+        "cv": 4.76
+      },
+      {
+        "ativo": "STOUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.02759,
+        "volume": 1347143.77384,
+        "var_preco": 12.51,
+        "var_volume": 0.47,
+        "cv": 6.15
+      },
+      {
+        "ativo": "STRKUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.04082,
+        "volume": 20558457.382976,
+        "var_preco": 15.96,
+        "var_volume": 67.58,
+        "cv": 14.94
+      },
+      {
+        "ativo": "STXUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.3457,
+        "volume": 14368659.4399,
+        "var_preco": 5.96,
+        "var_volume": 10.24,
+        "cv": 8.24
+      },
+      {
+        "ativo": "SUIUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.8687,
+        "volume": 156206551.63552,
+        "var_preco": 7.21,
+        "var_volume": 17.06,
+        "cv": 5.59
+      },
+      {
+        "ativo": "SUNUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.015588,
+        "volume": 769318.682813,
+        "var_preco": 3.48,
+        "var_volume": 51.38,
+        "cv": 3.2
       },
       {
         "ativo": "SUPERUSDT",
@@ -8876,6 +9756,26 @@
         "cv": 9.81
       },
       {
+        "ativo": "TRUSTUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.06332,
+        "volume": 4045625.60143,
+        "var_preco": 22.03,
+        "var_volume": 46.42,
+        "cv": 6.62
+      },
+      {
+        "ativo": "TRUTHUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.017806,
+        "volume": 3190515.71535,
+        "var_preco": 8.45,
+        "var_volume": 55.7,
+        "cv": 6.64
+      },
+      {
         "ativo": "TRXUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "SHORT",
@@ -8904,6 +9804,276 @@
         "var_preco": 9.89,
         "var_volume": 3.1,
         "cv": 5.73
+      },
+      {
+        "ativo": "TURTLEUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.03762,
+        "volume": 859639.76085,
+        "var_preco": 5.59,
+        "var_volume": 40.77,
+        "cv": 3.27
+      },
+      {
+        "ativo": "TUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.004597,
+        "volume": 3002918.329928,
+        "var_preco": 2.3,
+        "var_volume": 86.23,
+        "cv": 4.11
+      },
+      {
+        "ativo": "TUTUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01693,
+        "volume": 2252310.58355,
+        "var_preco": 6.21,
+        "var_volume": 36.57,
+        "cv": 5.22
+      },
+      {
+        "ativo": "TWTUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.3979,
+        "volume": 1086481.1827,
+        "var_preco": 7.77,
+        "var_volume": 9.08,
+        "cv": 5.47
+      },
+      {
+        "ativo": "UAIUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.1408,
+        "volume": 405802669.249,
+        "var_preco": 41.27,
+        "var_volume": 2065.93,
+        "cv": 34.17
+      },
+      {
+        "ativo": "UBUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.1078,
+        "volume": 1639215.58416,
+        "var_preco": 8.62,
+        "var_volume": 27.78,
+        "cv": 6.29
+      },
+      {
+        "ativo": "UMAUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.3293,
+        "volume": 947650.9943,
+        "var_preco": 7.44,
+        "var_volume": 15.15,
+        "cv": 5.67
+      },
+      {
+        "ativo": "UNIUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 6.884,
+        "volume": 157636326.713,
+        "var_preco": 3.35,
+        "var_volume": 20.77,
+        "cv": 3.56
+      },
+      {
+        "ativo": "USDCUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 1.000563,
+        "volume": 14146534.158457,
+        "var_preco": 0.0,
+        "var_volume": 200.18,
+        "cv": 0.02
+      },
+      {
+        "ativo": "USELESSUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.13198,
+        "volume": 16811311.87855,
+        "var_preco": 10.06,
+        "var_volume": 36.18,
+        "cv": 11.27
+      },
+      {
+        "ativo": "USTCUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.00433,
+        "volume": 541655.330232,
+        "var_preco": 9.98,
+        "var_volume": 59.34,
+        "cv": 5.62
+      },
+      {
+        "ativo": "USUALUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.010461,
+        "volume": 3328150.828611,
+        "var_preco": 0.86,
+        "var_volume": 147.13,
+        "cv": 2.96
+      },
+      {
+        "ativo": "USUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.004805,
+        "volume": 5176528.511657,
+        "var_preco": 7.77,
+        "var_volume": 58.9,
+        "cv": 9.05
+      },
+      {
+        "ativo": "VANAUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.7617,
+        "volume": 822496.078844,
+        "var_preco": 9.82,
+        "var_volume": 44.71,
+        "cv": 6.37
+      },
+      {
+        "ativo": "VELVETUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.04941,
+        "volume": 1629807.96668,
+        "var_preco": 14.54,
+        "var_volume": 31.69,
+        "cv": 10.75
+      },
+      {
+        "ativo": "VETUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.005429,
+        "volume": 3596365.106097,
+        "var_preco": 15.24,
+        "var_volume": 28.77,
+        "cv": 9.93
+      },
+      {
+        "ativo": "VIRTUALUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.5678,
+        "volume": 10735342.14813,
+        "var_preco": 8.75,
+        "var_volume": 26.34,
+        "cv": 5.91
+      },
+      {
+        "ativo": "VTHOUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.0005383,
+        "volume": 1195327.8877437,
+        "var_preco": 9.04,
+        "var_volume": 48.86,
+        "cv": 7.03
+      },
+      {
+        "ativo": "VVVUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 20.795,
+        "volume": 25013742.72207,
+        "var_preco": 12.57,
+        "var_volume": 26.08,
+        "cv": 7.39
+      },
+      {
+        "ativo": "WALUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.02908,
+        "volume": 6154298.101,
+        "var_preco": 13.81,
+        "var_volume": 36.3,
+        "cv": 13.02
+      },
+      {
+        "ativo": "WAXPUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.003981,
+        "volume": 566318.644731,
+        "var_preco": 11.43,
+        "var_volume": 38.04,
+        "cv": 5.54
+      },
+      {
+        "ativo": "WCTUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.03188,
+        "volume": 759775.20801,
+        "var_preco": 8.85,
+        "var_volume": 65.48,
+        "cv": 4.74
+      },
+      {
+        "ativo": "WETUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.05388,
+        "volume": 757115.71198,
+        "var_preco": 1.95,
+        "var_volume": 88.11,
+        "cv": 5.52
+      },
+      {
+        "ativo": "WIFUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.1639,
+        "volume": 10692208.13583,
+        "var_preco": 10.88,
+        "var_volume": 23.25,
+        "cv": 7.44
+      },
+      {
+        "ativo": "WLDUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.3437,
+        "volume": 113804799.4875,
+        "var_preco": 23.59,
+        "var_volume": 51.64,
+        "cv": 16.12
+      },
+      {
+        "ativo": "WLFIUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.0465,
+        "volume": 51494074.30175,
+        "var_preco": 11.18,
+        "var_volume": 83.56,
+        "cv": 5.71
+      },
+      {
+        "ativo": "WOOUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "LONG",
+        "preco": 0.0122,
+        "volume": 3723514.36236,
+        "var_preco": 11.32,
+        "var_volume": 29.16,
+        "cv": 6.36
       },
       {
         "ativo": "WUSDT",
@@ -9006,6 +10176,16 @@
         "cv": 2.97
       },
       {
+        "ativo": "XTZUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.2743,
+        "volume": 11681943.13342,
+        "var_preco": 1.53,
+        "var_volume": 194.17,
+        "cv": 8.77
+      },
+      {
         "ativo": "XVGUSDT",
         "data_alerta": "06/11/2026",
         "operacao": "SHORT",
@@ -9084,6 +10264,26 @@
         "var_preco": 7.67,
         "var_volume": 42.84,
         "cv": 4.89
+      },
+      {
+        "ativo": "ZENUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 5.187,
+        "volume": 5955025.2116,
+        "var_preco": 8.43,
+        "var_volume": 21.02,
+        "cv": 6.76
+      },
+      {
+        "ativo": "ZEREBROUSDT",
+        "data_alerta": "06/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.024574,
+        "volume": 2371191.862612,
+        "var_preco": 8.22,
+        "var_volume": 82.51,
+        "cv": 9.61
       },
       {
         "ativo": "ZESTUSDT",
