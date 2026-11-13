@@ -2602,36 +2602,6 @@
       "cv": 1.36
     },
     {
-      "ativo": "KERNELUSDT",
-      "data_alerta": "12/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.04515,
-      "volume": 1602685.84659,
-      "var_preco": 2.04,
-      "var_volume": 35.68,
-      "cv": 6.1
-    },
-    {
-      "ativo": "KGENUSDT",
-      "data_alerta": "12/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.075,
-      "volume": 214898254.89544,
-      "var_preco": 7.54,
-      "var_volume": 6097.88,
-      "cv": 18.53
-    },
-    {
-      "ativo": "KITEUSDT",
-      "data_alerta": "12/11/2026",
-      "operacao": "LONG",
-      "preco": 0.12591,
-      "volume": 10344015.82602,
-      "var_preco": 9.63,
-      "var_volume": 185.72,
-      "cv": 4.37
-    },
-    {
       "ativo": "KMNOUSDT",
       "data_alerta": "12/11/2026",
       "operacao": "SHORT",
@@ -7814,36 +7784,6 @@
         "var_preco": 0.25,
         "var_volume": 24.31,
         "cv": 1.36
-      },
-      {
-        "ativo": "KERNELUSDT",
-        "data_alerta": "12/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.04515,
-        "volume": 1602685.84659,
-        "var_preco": 2.04,
-        "var_volume": 35.68,
-        "cv": 6.1
-      },
-      {
-        "ativo": "KGENUSDT",
-        "data_alerta": "12/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.075,
-        "volume": 214898254.89544,
-        "var_preco": 7.54,
-        "var_volume": 6097.88,
-        "cv": 18.53
-      },
-      {
-        "ativo": "KITEUSDT",
-        "data_alerta": "12/11/2026",
-        "operacao": "LONG",
-        "preco": 0.12591,
-        "volume": 10344015.82602,
-        "var_preco": 9.63,
-        "var_volume": 185.72,
-        "cv": 4.37
       },
       {
         "ativo": "KMNOUSDT",
