@@ -1242,16 +1242,6 @@
       "cv": 9.62
     },
     {
-      "ativo": "CGPTUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.0154,
-      "volume": 582658.29952,
-      "var_preco": 13.14,
-      "var_volume": 55.53,
-      "cv": 7.41
-    },
-    {
       "ativo": "CHILLGUYUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -1540,26 +1530,6 @@
       "var_preco": 10.56,
       "var_volume": 49.23,
       "cv": 6.76
-    },
-    {
-      "ativo": "DODOXUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "LONG",
-      "preco": 0.032918,
-      "volume": 10422936.598373,
-      "var_preco": 35.45,
-      "var_volume": 15.37,
-      "cv": 13.47
-    },
-    {
-      "ativo": "DOGEUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.05891,
-      "volume": 307123279.43834,
-      "var_preco": 17.33,
-      "var_volume": 4.62,
-      "cv": 8.45
     },
     {
       "ativo": "DOGSUSDT",
@@ -2172,46 +2142,6 @@
       "cv": 11.16
     },
     {
-      "ativo": "GUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.002662,
-      "volume": 1738279.1013,
-      "var_preco": 15.84,
-      "var_volume": 82.04,
-      "cv": 9.98
-    },
-    {
-      "ativo": "GWEIUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01511,
-      "volume": 1442659.50978,
-      "var_preco": 19.04,
-      "var_volume": 74.84,
-      "cv": 11.91
-    },
-    {
-      "ativo": "HAEDALUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01984,
-      "volume": 1759639.74484,
-      "var_preco": 20.96,
-      "var_volume": 89.11,
-      "cv": 11.42
-    },
-    {
-      "ativo": "HANAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01413,
-      "volume": 3522134.9775,
-      "var_preco": 6.53,
-      "var_volume": 63.28,
-      "cv": 9.86
-    },
-    {
       "ativo": "HBARUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -2372,16 +2302,6 @@
       "cv": 10.62
     },
     {
-      "ativo": "ILVUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 2.39,
-      "volume": 1336616.4617,
-      "var_preco": 15.58,
-      "var_volume": 3.39,
-      "cv": 8.01
-    },
-    {
       "ativo": "IMXUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -2430,56 +2350,6 @@
       "var_preco": 18.02,
       "var_volume": 48.02,
       "cv": 10.25
-    },
-    {
-      "ativo": "IOSTUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.0005621,
-      "volume": 2998293.6126779,
-      "var_preco": 17.64,
-      "var_volume": 59.2,
-      "cv": 8.46
-    },
-    {
-      "ativo": "IOTAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.03185,
-      "volume": 2022529.953061,
-      "var_preco": 13.92,
-      "var_volume": 30.81,
-      "cv": 8.7
-    },
-    {
-      "ativo": "IOTXUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.002451,
-      "volume": 577102.136206,
-      "var_preco": 21.08,
-      "var_volume": 59.7,
-      "cv": 12.13
-    },
-    {
-      "ativo": "IOUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.0954,
-      "volume": 2236761.97954,
-      "var_preco": 21.95,
-      "var_volume": 22.88,
-      "cv": 11.75
-    },
-    {
-      "ativo": "IRYSUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01471,
-      "volume": 3963724.96572,
-      "var_preco": 23.99,
-      "var_volume": 83.04,
-      "cv": 16.75
     },
     {
       "ativo": "JASMYUSDT",
@@ -2752,16 +2622,6 @@
       "cv": 4.76
     },
     {
-      "ativo": "LITUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 2.9703,
-      "volume": 231517086.044,
-      "var_preco": 5.35,
-      "var_volume": 203.86,
-      "cv": 7.03
-    },
-    {
       "ativo": "LPTUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -2840,56 +2700,6 @@
       "var_preco": 16.43,
       "var_volume": 51.51,
       "cv": 6.48
-    },
-    {
-      "ativo": "MAGMAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.25867,
-      "volume": 9788494.28945,
-      "var_preco": 19.65,
-      "var_volume": 71.57,
-      "cv": 22.9
-    },
-    {
-      "ativo": "MANAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.06084,
-      "volume": 2213520.84911,
-      "var_preco": 14.71,
-      "var_volume": 38.54,
-      "cv": 6.49
-    },
-    {
-      "ativo": "MANTAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.04199,
-      "volume": 1565408.713672,
-      "var_preco": 21.77,
-      "var_volume": 17.32,
-      "cv": 12.66
-    },
-    {
-      "ativo": "MANTRAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.00228,
-      "volume": 1625618.377939,
-      "var_preco": 26.22,
-      "var_volume": 33.89,
-      "cv": 12.57
-    },
-    {
-      "ativo": "MARSCOINUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.03306,
-      "volume": 8615337.65368,
-      "var_preco": 30.09,
-      "var_volume": 35.46,
-      "cv": 19.97
     },
     {
       "ativo": "MASKUSDT",
@@ -3922,26 +3732,6 @@
       "cv": 7.95
     },
     {
-      "ativo": "SANTOSUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.3467,
-      "volume": 529770.67016,
-      "var_preco": 12.2,
-      "var_volume": 26.7,
-      "cv": 6.89
-    },
-    {
-      "ativo": "SAPIENUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.0373,
-      "volume": 1117595.88355,
-      "var_preco": 21.43,
-      "var_volume": 62.49,
-      "cv": 11.01
-    },
-    {
       "ativo": "SCRUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "LONG",
@@ -4160,26 +3950,6 @@
       "var_preco": 12.53,
       "var_volume": 3.12,
       "cv": 6.96
-    },
-    {
-      "ativo": "SPKUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01383,
-      "volume": 1734673.61791,
-      "var_preco": 15.61,
-      "var_volume": 45.12,
-      "cv": 8.34
-    },
-    {
-      "ativo": "SPORTFUNUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.01192,
-      "volume": 1029260.85726,
-      "var_preco": 11.0,
-      "var_volume": 13.76,
-      "cv": 11.52
     },
     {
       "ativo": "SPXUSDT",
@@ -4442,16 +4212,6 @@
       "cv": 9.13
     },
     {
-      "ativo": "THEUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.02982,
-      "volume": 1725020.9078,
-      "var_preco": 26.62,
-      "var_volume": 45.66,
-      "cv": 20.33
-    },
-    {
       "ativo": "TIAUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -4642,56 +4402,6 @@
       "cv": 6.01
     },
     {
-      "ativo": "UAIUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.03483,
-      "volume": 14800029.74424,
-      "var_preco": 71.67,
-      "var_volume": 75.59,
-      "cv": 75.57
-    },
-    {
-      "ativo": "UBUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.10779,
-      "volume": 1292213.52574,
-      "var_preco": 1.31,
-      "var_volume": 44.05,
-      "cv": 5.29
-    },
-    {
-      "ativo": "UMAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.2645,
-      "volume": 706163.2846,
-      "var_preco": 17.32,
-      "var_volume": 32.83,
-      "cv": 8.08
-    },
-    {
-      "ativo": "UNIUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 5.165,
-      "volume": 127303554.116,
-      "var_preco": 22.7,
-      "var_volume": 39.8,
-      "cv": 10.83
-    },
-    {
-      "ativo": "USDCUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 1.000376,
-      "volume": 3906101.307175,
-      "var_preco": 0.01,
-      "var_volume": 27.21,
-      "cv": 0.03
-    },
-    {
       "ativo": "USELESSUSDT",
       "data_alerta": "16/11/2026",
       "operacao": "SHORT",
@@ -4700,56 +4410,6 @@
       "var_preco": 28.55,
       "var_volume": 45.67,
       "cv": 12.05
-    },
-    {
-      "ativo": "USTCUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.003754,
-      "volume": 599796.73384,
-      "var_preco": 14.18,
-      "var_volume": 24.82,
-      "cv": 8.99
-    },
-    {
-      "ativo": "USUALUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.009936,
-      "volume": 1409212.363103,
-      "var_preco": 4.59,
-      "var_volume": 27.55,
-      "cv": 3.75
-    },
-    {
-      "ativo": "USUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.003531,
-      "volume": 3118029.786449,
-      "var_preco": 20.72,
-      "var_volume": 51.6,
-      "cv": 12.31
-    },
-    {
-      "ativo": "VANAUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 0.6365,
-      "volume": 640696.376336,
-      "var_preco": 16.32,
-      "var_volume": 47.02,
-      "cv": 8.57
-    },
-    {
-      "ativo": "VELVETUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "LONG",
-      "preco": 0.05249,
-      "volume": 3051332.24105,
-      "var_preco": 2.86,
-      "var_volume": 23.96,
-      "cv": 8.93
     },
     {
       "ativo": "VETUSDT",
@@ -5150,16 +4810,6 @@
       "var_preco": 16.69,
       "var_volume": 34.83,
       "cv": 12.13
-    },
-    {
-      "ativo": "ZROUSDT",
-      "data_alerta": "16/11/2026",
-      "operacao": "SHORT",
-      "preco": 1.4619,
-      "volume": 36821803.10786,
-      "var_preco": 10.37,
-      "var_volume": 16.74,
-      "cv": 8.56
     },
     {
       "ativo": "ZRXUSDT",
@@ -6466,16 +6116,6 @@
         "cv": 9.62
       },
       {
-        "ativo": "CGPTUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.0154,
-        "volume": 582658.29952,
-        "var_preco": 13.14,
-        "var_volume": 55.53,
-        "cv": 7.41
-      },
-      {
         "ativo": "CHILLGUYUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -6764,26 +6404,6 @@
         "var_preco": 10.56,
         "var_volume": 49.23,
         "cv": 6.76
-      },
-      {
-        "ativo": "DODOXUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "LONG",
-        "preco": 0.032918,
-        "volume": 10422936.598373,
-        "var_preco": 35.45,
-        "var_volume": 15.37,
-        "cv": 13.47
-      },
-      {
-        "ativo": "DOGEUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.05891,
-        "volume": 307123279.43834,
-        "var_preco": 17.33,
-        "var_volume": 4.62,
-        "cv": 8.45
       },
       {
         "ativo": "DOGSUSDT",
@@ -7396,46 +7016,6 @@
         "cv": 11.16
       },
       {
-        "ativo": "GUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.002662,
-        "volume": 1738279.1013,
-        "var_preco": 15.84,
-        "var_volume": 82.04,
-        "cv": 9.98
-      },
-      {
-        "ativo": "GWEIUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01511,
-        "volume": 1442659.50978,
-        "var_preco": 19.04,
-        "var_volume": 74.84,
-        "cv": 11.91
-      },
-      {
-        "ativo": "HAEDALUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01984,
-        "volume": 1759639.74484,
-        "var_preco": 20.96,
-        "var_volume": 89.11,
-        "cv": 11.42
-      },
-      {
-        "ativo": "HANAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01413,
-        "volume": 3522134.9775,
-        "var_preco": 6.53,
-        "var_volume": 63.28,
-        "cv": 9.86
-      },
-      {
         "ativo": "HBARUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -7596,16 +7176,6 @@
         "cv": 10.62
       },
       {
-        "ativo": "ILVUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 2.39,
-        "volume": 1336616.4617,
-        "var_preco": 15.58,
-        "var_volume": 3.39,
-        "cv": 8.01
-      },
-      {
         "ativo": "IMXUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -7654,56 +7224,6 @@
         "var_preco": 18.02,
         "var_volume": 48.02,
         "cv": 10.25
-      },
-      {
-        "ativo": "IOSTUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.0005621,
-        "volume": 2998293.6126779,
-        "var_preco": 17.64,
-        "var_volume": 59.2,
-        "cv": 8.46
-      },
-      {
-        "ativo": "IOTAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.03185,
-        "volume": 2022529.953061,
-        "var_preco": 13.92,
-        "var_volume": 30.81,
-        "cv": 8.7
-      },
-      {
-        "ativo": "IOTXUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.002451,
-        "volume": 577102.136206,
-        "var_preco": 21.08,
-        "var_volume": 59.7,
-        "cv": 12.13
-      },
-      {
-        "ativo": "IOUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.0954,
-        "volume": 2236761.97954,
-        "var_preco": 21.95,
-        "var_volume": 22.88,
-        "cv": 11.75
-      },
-      {
-        "ativo": "IRYSUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01471,
-        "volume": 3963724.96572,
-        "var_preco": 23.99,
-        "var_volume": 83.04,
-        "cv": 16.75
       },
       {
         "ativo": "JASMYUSDT",
@@ -7976,16 +7496,6 @@
         "cv": 4.76
       },
       {
-        "ativo": "LITUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 2.9703,
-        "volume": 231517086.044,
-        "var_preco": 5.35,
-        "var_volume": 203.86,
-        "cv": 7.03
-      },
-      {
         "ativo": "LPTUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -8064,56 +7574,6 @@
         "var_preco": 16.43,
         "var_volume": 51.51,
         "cv": 6.48
-      },
-      {
-        "ativo": "MAGMAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.25867,
-        "volume": 9788494.28945,
-        "var_preco": 19.65,
-        "var_volume": 71.57,
-        "cv": 22.9
-      },
-      {
-        "ativo": "MANAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.06084,
-        "volume": 2213520.84911,
-        "var_preco": 14.71,
-        "var_volume": 38.54,
-        "cv": 6.49
-      },
-      {
-        "ativo": "MANTAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.04199,
-        "volume": 1565408.713672,
-        "var_preco": 21.77,
-        "var_volume": 17.32,
-        "cv": 12.66
-      },
-      {
-        "ativo": "MANTRAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.00228,
-        "volume": 1625618.377939,
-        "var_preco": 26.22,
-        "var_volume": 33.89,
-        "cv": 12.57
-      },
-      {
-        "ativo": "MARSCOINUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.03306,
-        "volume": 8615337.65368,
-        "var_preco": 30.09,
-        "var_volume": 35.46,
-        "cv": 19.97
       },
       {
         "ativo": "MASKUSDT",
@@ -9146,26 +8606,6 @@
         "cv": 7.95
       },
       {
-        "ativo": "SANTOSUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.3467,
-        "volume": 529770.67016,
-        "var_preco": 12.2,
-        "var_volume": 26.7,
-        "cv": 6.89
-      },
-      {
-        "ativo": "SAPIENUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.0373,
-        "volume": 1117595.88355,
-        "var_preco": 21.43,
-        "var_volume": 62.49,
-        "cv": 11.01
-      },
-      {
         "ativo": "SCRUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "LONG",
@@ -9384,26 +8824,6 @@
         "var_preco": 12.53,
         "var_volume": 3.12,
         "cv": 6.96
-      },
-      {
-        "ativo": "SPKUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01383,
-        "volume": 1734673.61791,
-        "var_preco": 15.61,
-        "var_volume": 45.12,
-        "cv": 8.34
-      },
-      {
-        "ativo": "SPORTFUNUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.01192,
-        "volume": 1029260.85726,
-        "var_preco": 11.0,
-        "var_volume": 13.76,
-        "cv": 11.52
       },
       {
         "ativo": "SPXUSDT",
@@ -9666,16 +9086,6 @@
         "cv": 9.13
       },
       {
-        "ativo": "THEUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.02982,
-        "volume": 1725020.9078,
-        "var_preco": 26.62,
-        "var_volume": 45.66,
-        "cv": 20.33
-      },
-      {
         "ativo": "TIAUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -9866,56 +9276,6 @@
         "cv": 6.01
       },
       {
-        "ativo": "UAIUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.03483,
-        "volume": 14800029.74424,
-        "var_preco": 71.67,
-        "var_volume": 75.59,
-        "cv": 75.57
-      },
-      {
-        "ativo": "UBUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.10779,
-        "volume": 1292213.52574,
-        "var_preco": 1.31,
-        "var_volume": 44.05,
-        "cv": 5.29
-      },
-      {
-        "ativo": "UMAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.2645,
-        "volume": 706163.2846,
-        "var_preco": 17.32,
-        "var_volume": 32.83,
-        "cv": 8.08
-      },
-      {
-        "ativo": "UNIUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 5.165,
-        "volume": 127303554.116,
-        "var_preco": 22.7,
-        "var_volume": 39.8,
-        "cv": 10.83
-      },
-      {
-        "ativo": "USDCUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 1.000376,
-        "volume": 3906101.307175,
-        "var_preco": 0.01,
-        "var_volume": 27.21,
-        "cv": 0.03
-      },
-      {
         "ativo": "USELESSUSDT",
         "data_alerta": "16/11/2026",
         "operacao": "SHORT",
@@ -9924,56 +9284,6 @@
         "var_preco": 28.55,
         "var_volume": 45.67,
         "cv": 12.05
-      },
-      {
-        "ativo": "USTCUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.003754,
-        "volume": 599796.73384,
-        "var_preco": 14.18,
-        "var_volume": 24.82,
-        "cv": 8.99
-      },
-      {
-        "ativo": "USUALUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.009936,
-        "volume": 1409212.363103,
-        "var_preco": 4.59,
-        "var_volume": 27.55,
-        "cv": 3.75
-      },
-      {
-        "ativo": "USUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.003531,
-        "volume": 3118029.786449,
-        "var_preco": 20.72,
-        "var_volume": 51.6,
-        "cv": 12.31
-      },
-      {
-        "ativo": "VANAUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 0.6365,
-        "volume": 640696.376336,
-        "var_preco": 16.32,
-        "var_volume": 47.02,
-        "cv": 8.57
-      },
-      {
-        "ativo": "VELVETUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "LONG",
-        "preco": 0.05249,
-        "volume": 3051332.24105,
-        "var_preco": 2.86,
-        "var_volume": 23.96,
-        "cv": 8.93
       },
       {
         "ativo": "VETUSDT",
@@ -10374,16 +9684,6 @@
         "var_preco": 16.69,
         "var_volume": 34.83,
         "cv": 12.13
-      },
-      {
-        "ativo": "ZROUSDT",
-        "data_alerta": "16/11/2026",
-        "operacao": "SHORT",
-        "preco": 1.4619,
-        "volume": 36821803.10786,
-        "var_preco": 10.37,
-        "var_volume": 16.74,
-        "cv": 8.56
       },
       {
         "ativo": "ZRXUSDT",
