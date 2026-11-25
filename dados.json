@@ -932,6 +932,16 @@
       "cv": 17.87
     },
     {
+      "ativo": "BLESSUSDT",
+      "data_alerta": "24/11/2026",
+      "operacao": "LONG",
+      "preco": 0.017614,
+      "volume": 293887991.40853,
+      "var_preco": 69.36,
+      "var_volume": 143.97,
+      "cv": 30.58
+    },
+    {
       "ativo": "BLUAIUSDT",
       "data_alerta": "24/11/2026",
       "operacao": "SHORT",
@@ -1230,6 +1240,16 @@
       "var_preco": 15.26,
       "var_volume": 21.45,
       "cv": 13.54
+    },
+    {
+      "ativo": "CGPTUSDT",
+      "data_alerta": "24/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.01238,
+      "volume": 625668.75855,
+      "var_preco": 22.01,
+      "var_volume": 53.36,
+      "cv": 10.97
     },
     {
       "ativo": "CHILLGUYUSDT",
@@ -2340,6 +2360,16 @@
       "var_preco": 24.77,
       "var_volume": 82.42,
       "cv": 25.49
+    },
+    {
+      "ativo": "IDUSDT",
+      "data_alerta": "24/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.0199,
+      "volume": 1492981.55064,
+      "var_preco": 16.56,
+      "var_volume": 26.9,
+      "cv": 13.36
     },
     {
       "ativo": "ILVUSDT",
@@ -6126,6 +6156,16 @@
         "cv": 17.87
       },
       {
+        "ativo": "BLESSUSDT",
+        "data_alerta": "24/11/2026",
+        "operacao": "LONG",
+        "preco": 0.017614,
+        "volume": 293887991.40853,
+        "var_preco": 69.36,
+        "var_volume": 143.97,
+        "cv": 30.58
+      },
+      {
         "ativo": "BLUAIUSDT",
         "data_alerta": "24/11/2026",
         "operacao": "SHORT",
@@ -6424,6 +6464,16 @@
         "var_preco": 15.26,
         "var_volume": 21.45,
         "cv": 13.54
+      },
+      {
+        "ativo": "CGPTUSDT",
+        "data_alerta": "24/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.01238,
+        "volume": 625668.75855,
+        "var_preco": 22.01,
+        "var_volume": 53.36,
+        "cv": 10.97
       },
       {
         "ativo": "CHILLGUYUSDT",
@@ -7534,6 +7584,16 @@
         "var_preco": 24.77,
         "var_volume": 82.42,
         "cv": 25.49
+      },
+      {
+        "ativo": "IDUSDT",
+        "data_alerta": "24/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.0199,
+        "volume": 1492981.55064,
+        "var_preco": 16.56,
+        "var_volume": 26.9,
+        "cv": 13.36
       },
       {
         "ativo": "ILVUSDT",
