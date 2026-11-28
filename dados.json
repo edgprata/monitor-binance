@@ -3532,6 +3532,16 @@
       "cv": 6.43
     },
     {
+      "ativo": "POLYXUSDT",
+      "data_alerta": "27/11/2026",
+      "operacao": "SHORT",
+      "preco": 0.02661,
+      "volume": 1132511.0183,
+      "var_preco": 1.09,
+      "var_volume": 13.54,
+      "cv": 8.9
+    },
+    {
       "ativo": "PONSUSDT",
       "data_alerta": "27/11/2026",
       "operacao": "SHORT",
@@ -8744,6 +8754,16 @@
         "var_preco": 4.63,
         "var_volume": 32.79,
         "cv": 6.43
+      },
+      {
+        "ativo": "POLYXUSDT",
+        "data_alerta": "27/11/2026",
+        "operacao": "SHORT",
+        "preco": 0.02661,
+        "volume": 1132511.0183,
+        "var_preco": 1.09,
+        "var_volume": 13.54,
+        "cv": 8.9
       },
       {
         "ativo": "PONSUSDT",
